@@ -11,6 +11,7 @@ from datetime import UTC, date, datetime
 
 from runway import entities as E
 from runway import llm
+from runway.agents.grounding import is_grounded
 from runway.models import Finding, TransactionIn
 from runway.persona import PERSONA
 from runway.policies import same_vendor
@@ -153,17 +154,17 @@ async def analyze(txn: TransactionIn) -> Finding:
         if opps
         else None
     )
-    message = await llm.text(
-        f"""SaaS charge: {txn.merchant}, ${txn.amount:,.2f}. Days until renewal: {days}.
+    prompt = f"""SaaS charge: {txn.merchant}, ${txn.amount:,.2f}. Days until renewal: {days}.
 Everything we know about this vendor:
 {sig.as_prompt()}
 
 Ranked opportunities (biggest first): {[o.summary for o in opps]}
 
 Write the founder alert. Lead with the biggest saving. Mention seat counts and the renewal date
-if present. Don't ask a question; the approval prompt is added separately.""",
-        system=PERSONA,
-    ) or _template(txn, sig, opps, days)
+if present. Don't ask a question; the approval prompt is added separately."""
+    message = await llm.text(prompt, system=PERSONA)
+    if not message or not is_grounded(message, prompt):
+        message = _template(txn, sig, opps, days)
 
     return Finding(
         pillar="saas_sprawl",

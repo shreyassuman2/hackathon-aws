@@ -93,3 +93,21 @@ def test_employee_escalation_handles_curly_apostrophe():
 
     text = "I don’t know what that is".lower().replace("’", "'")
     assert any(w in text for w in ESCALATE_WORDS)
+
+
+def test_grounding_rejects_invented_dollar_figures():
+    from runway.agents.grounding import is_grounded
+
+    source = "Charge: Cursor, $1400.00. potential_savings 308"
+    assert is_grounded("Cursor billed $1,400; routing saves about $308/mo.", source)
+    assert is_grounded("That is $3,696/yr.", source)
+    assert not is_grounded("You could save $9,999 a month.", source)
+
+
+async def test_ask_tools_cover_vendor_opportunities_and_pillars():
+    from runway.agents import ask
+
+    assert "vendor_opportunities" in {t.name for t in ask.TOOLS}
+    out = await ask.spend_by_pillar(30)
+    assert "by_pillar" in out
+    assert (await ask.vendor_opportunities("Linear"))["vendor"] == "Linear"
