@@ -54,3 +54,25 @@ async def test_crash_before_email_send_keeps_it_queued(seeded, monkeypatch):
     await engine.tick(neg["id"])
     assert sent[0] == "Cursor renewal: pricing"  # the queued opening email went out exactly once first
     assert sent.count("Cursor renewal: pricing") == 1
+
+
+async def test_final_offer_asks_founder_then_accepts(seeded, monkeypatch):
+    """Vendor says 18% is final, the contract is above the auto-accept cap: the founder decides by text."""
+    from runway import conversation, restraint
+    from runway.negotiation import fixtures
+
+    monkeypatch.setattr(restraint, "should_send_now", lambda tier, now=None: True)
+    monkeypatch.setattr(
+        fixtures,
+        "replies_for",
+        lambda vendor: [("sales@bigco.example", "We can do 18% off. That's the best we can do on this plan.")],
+    )
+    neg, _ = engine.start("BigCo", 6000, target_pct=25, demo=True)  # $6k/mo > the $5k auto-accept cap
+    await _run_to_end(3)
+    n = seeded.get(E.NEGOTIATION, neg["id"])
+    assert n["status"] == "needs_founder" and n["pending_offer_pct"] == 18 and n["founder_alert_id"]
+
+    await conversation.handle_inbound("y")
+    n = seeded.get(E.NEGOTIATION, neg["id"])
+    assert n["status"] == "closed_won" and n["current_offer_pct"] == 18
+    assert seeded.get(E.ALERT, n["founder_alert_id"])["founder_action"] == "Y"
