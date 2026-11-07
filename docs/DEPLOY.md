@@ -52,3 +52,32 @@ Prereqs: AWS account, [AWS SAM CLI](https://docs.aws.amazon.com/serverless-appli
   for production; put real auth (e.g. Cognito) in front before real users.
 - Logs: CloudWatch → `/aws/lambda/<stack>-ApiFunction-…` and `…-NegotiationFunction-…`.
 - Teardown: `sam delete`. The DynamoDB table is retained on purpose; delete it by hand if you mean to.
+
+## Live negotiation email
+
+By default negotiations run in demo mode: emails print to the logs and the vendor's replies are
+canned. To negotiate with a real inbox (a teammate playing the vendor):
+
+1. **SES:** verify the sender (`EMAIL_FROM`) and the teammate's address. New accounts are in the
+   SES sandbox, which only delivers to verified addresses. That's fine for a demo, and it's a second
+   safety net.
+2. **Reply inbox:** a Gmail account for Runway with 2-step verification on, and an
+   [app password](https://myaccount.google.com/apppasswords) for IMAP.
+3. **Deploy:**
+   ```bash
+   EMAIL_FROM=runway.demo@gmail.com \
+   VENDOR_EMAIL_OVERRIDE=teammate@example.com \
+   IMAP_USER=runway.demo@gmail.com IMAP_PASSWORD='abcd efgh ijkl mnop' \
+   ./infra/deploy.sh
+   ```
+   **Always set `VENDOR_EMAIL_OVERRIDE` for demos.** With it, every vendor email goes to the teammate
+   no matter which vendor is being negotiated. Without it, Runway only emails vendors whose address
+   was given explicitly (`POST /negotiations {"vendor_email": ...}`). A negotiation started from a
+   text ("y", "negotiate Cursor") runs in demo mode rather than emailing a guessed address like
+   `renewals@cursor.com`, which is a real company.
+4. **Replies:** the teammate replies to Runway's email and keeps the subject line (`Re: Cursor renewal: pricing`).
+   The worker Lambda checks the inbox every 5 minutes. To move faster in a live demo, trigger a step
+   right after the reply: `POST /negotiations/{id}/tick` (or run `make worker` locally, which checks every 10 seconds).
+
+The IMAP app password is stored as a Lambda environment variable (hidden in the deploy, but readable
+by anyone with Lambda console access to the account). Use a throwaway Gmail account, not a personal one.
