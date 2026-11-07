@@ -1,0 +1,4452 @@
+{
+ "company_id": "00000001-0000-4000-8000-000000000001",
+ "entities": {
+  "company": [
+   {
+    "id": "00000001-0000-4000-8000-000000000001",
+    "name": "Acme Labs",
+    "founder_email": "founders@acmelabs.ai",
+    "monthly_budget": 50000,
+    "founder_phone": ""
+   }
+  ],
+  "employee": [
+   {
+    "id": "00000001-0000-4000-8000-000000000010",
+    "name": "Sarah J.",
+    "email": "sarah.j@acmelabs.ai",
+    "role": "Head of Design",
+    "monthly_expense_cap": 500,
+    "phone": "+15550100000"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000011",
+    "name": "Marcus K.",
+    "email": "marcus.k@acmelabs.ai",
+    "role": "Senior Engineer",
+    "monthly_expense_cap": 400,
+    "phone": "+15550100001"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000012",
+    "name": "Alex L.",
+    "email": "alex.l@acmelabs.ai",
+    "role": "Product Manager",
+    "monthly_expense_cap": 400,
+    "phone": "+15550100002"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000013",
+    "name": "Tom R.",
+    "email": "tom.r@acmelabs.ai",
+    "role": "Sales Lead",
+    "monthly_expense_cap": 400,
+    "phone": "+15550100003"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000014",
+    "name": "Priya S.",
+    "email": "priya.s@acmelabs.ai",
+    "role": "Engineer",
+    "monthly_expense_cap": 400,
+    "phone": "+15550100004"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000015",
+    "name": "Jordan M.",
+    "email": "jordan.m@acmelabs.ai",
+    "role": "Engineer",
+    "monthly_expense_cap": 400,
+    "phone": "+15550100005"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000016",
+    "name": "Casey W.",
+    "email": "casey.w@acmelabs.ai",
+    "role": "Designer",
+    "monthly_expense_cap": 400,
+    "phone": "+15550100006"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000017",
+    "name": "Riley B.",
+    "email": "riley.b@acmelabs.ai",
+    "role": "Marketing",
+    "monthly_expense_cap": 400,
+    "phone": "+15550100007"
+   }
+  ],
+  "transaction": [
+   {
+    "id": "00000001-0000-4000-8000-000000000201",
+    "created_at": "2026-03-24T09:12:00+00:00",
+    "merchant": "Anthropic",
+    "amount": 800,
+    "category": "ai_spend",
+    "submitted_by": "system",
+    "memo": "Weekly usage invoice",
+    "status": "posted",
+    "pillar": "ai_spend",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000202",
+    "created_at": "2026-03-31T09:08:00+00:00",
+    "merchant": "Anthropic",
+    "amount": 1200,
+    "category": "ai_spend",
+    "submitted_by": "system",
+    "memo": "Weekly usage invoice",
+    "status": "posted",
+    "pillar": "ai_spend",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000203",
+    "created_at": "2026-04-07T09:15:00+00:00",
+    "merchant": "Anthropic",
+    "amount": 2400,
+    "category": "ai_spend",
+    "submitted_by": "system",
+    "memo": "Weekly usage invoice",
+    "status": "posted",
+    "pillar": "ai_spend",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000204",
+    "created_at": "2026-04-14T09:10:00+00:00",
+    "merchant": "Anthropic",
+    "amount": 4200,
+    "category": "ai_spend",
+    "submitted_by": "system",
+    "memo": "Weekly usage invoice",
+    "status": "posted",
+    "pillar": "ai_spend",
+    "agent_assigned": "orchestrator",
+    "agent_reasoning": "Opus volume spike on invoice_classification batch jobs.",
+    "agent_output": {
+     "spike_pct": 340
+    },
+    "savings_identified": 2840
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000211",
+    "created_at": "2026-03-25T10:00:00+00:00",
+    "merchant": "OpenAI",
+    "amount": 340,
+    "category": "ai_spend",
+    "submitted_by": "system",
+    "memo": "API usage",
+    "status": "posted",
+    "pillar": "ai_spend",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000212",
+    "created_at": "2026-04-01T10:02:00+00:00",
+    "merchant": "OpenAI",
+    "amount": 338,
+    "category": "ai_spend",
+    "submitted_by": "system",
+    "memo": "API usage",
+    "status": "posted",
+    "pillar": "ai_spend",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000213",
+    "created_at": "2026-04-08T10:01:00+00:00",
+    "merchant": "OpenAI",
+    "amount": 342,
+    "category": "ai_spend",
+    "submitted_by": "system",
+    "memo": "API usage",
+    "status": "posted",
+    "pillar": "ai_spend",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000214",
+    "created_at": "2026-04-15T10:05:00+00:00",
+    "merchant": "OpenAI",
+    "amount": 340,
+    "category": "ai_spend",
+    "submitted_by": "system",
+    "memo": "API usage",
+    "status": "posted",
+    "pillar": "ai_spend",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000221",
+    "created_at": "2025-11-02T14:00:00+00:00",
+    "merchant": "Cursor",
+    "amount": 1400,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Team subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000222",
+    "created_at": "2025-12-02T14:00:00+00:00",
+    "merchant": "Cursor",
+    "amount": 1400,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Team subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000223",
+    "created_at": "2026-01-02T14:00:00+00:00",
+    "merchant": "Cursor",
+    "amount": 1400,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Team subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000224",
+    "created_at": "2026-02-02T14:00:00+00:00",
+    "merchant": "Cursor",
+    "amount": 1400,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Team subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000225",
+    "created_at": "2026-03-02T14:00:00+00:00",
+    "merchant": "Cursor",
+    "amount": 1400,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Team subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 1200
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000226",
+    "created_at": "2026-04-02T14:00:00+00:00",
+    "merchant": "Cursor",
+    "amount": 1400,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Team subscription renewal pending",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "agent_assigned": "usage_signals",
+    "agent_reasoning": "Ghost seats detected vs GitHub activity.",
+    "agent_output": {
+     "ghost_seats": 6
+    },
+    "savings_identified": 1200
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000231",
+    "created_at": "2025-12-18T11:00:00+00:00",
+    "merchant": "Midjourney",
+    "amount": 200,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000232",
+    "created_at": "2026-01-18T11:00:00+00:00",
+    "merchant": "Midjourney",
+    "amount": 200,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000233",
+    "created_at": "2026-02-18T11:00:00+00:00",
+    "merchant": "Midjourney",
+    "amount": 200,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000234",
+    "created_at": "2026-03-28T11:00:00+00:00",
+    "merchant": "Midjourney",
+    "amount": 200,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "agent_assigned": "usage_signals",
+    "agent_reasoning": "Zero opens across seats 21d.",
+    "agent_output": {
+     "dormant_seats": 5
+    },
+    "savings_identified": 200
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000241",
+    "created_at": "2026-03-15T08:30:00+00:00",
+    "merchant": "Notion",
+    "amount": 480,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Team plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000242",
+    "created_at": "2026-04-15T08:30:00+00:00",
+    "merchant": "Notion",
+    "amount": 480,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Team plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000250",
+    "created_at": "2026-04-02T19:40:00+00:00",
+    "merchant": "Capital Grille",
+    "amount": 89,
+    "category": "meals",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "memo": "Client dinner, Acme/Mike Chen",
+    "status": "resolved",
+    "pillar": "compliance",
+    "agent_assigned": "compliance_agent",
+    "agent_reasoning": "Within policy with documented client purpose.",
+    "agent_output": {
+     "policy": "ok"
+    },
+    "founder_action": "Y",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000251",
+    "created_at": "2026-04-05T07:15:00+00:00",
+    "merchant": "Uber",
+    "amount": 34,
+    "category": "travel",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "memo": "Airport, conference travel",
+    "status": "resolved",
+    "pillar": "compliance",
+    "agent_assigned": "compliance_agent",
+    "agent_reasoning": "Travel memo matches calendar flight block.",
+    "agent_output": {
+     "policy": "ok"
+    },
+    "founder_action": "Y",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000252",
+    "created_at": "2026-04-10T13:22:00+00:00",
+    "merchant": "Amazon",
+    "amount": 240,
+    "category": "general",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "status": "pending",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000253",
+    "created_at": "2026-04-11T21:05:00+00:00",
+    "merchant": "Nobu",
+    "amount": 680,
+    "category": "entertainment",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "memo": "Client entertainment",
+    "status": "flagged",
+    "pillar": "compliance",
+    "agent_assigned": "compliance_agent",
+    "agent_reasoning": "Exceeds $400 entertainment cap.",
+    "agent_output": {
+     "cap": 400
+    },
+    "savings_identified": 280
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000254",
+    "created_at": "2026-04-12T16:50:00+00:00",
+    "merchant": "AWS Marketplace",
+    "amount": 612,
+    "category": "unknown",
+    "submitted_by": "system",
+    "status": "pending",
+    "pillar": "unknown",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000255",
+    "created_at": "2026-04-03T12:10:00+00:00",
+    "merchant": "Blue Bottle Coffee",
+    "amount": 48,
+    "category": "meals",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "memo": "Team sync",
+    "status": "resolved",
+    "pillar": "compliance",
+    "agent_assigned": "compliance_agent",
+    "agent_reasoning": "Under cap with team context.",
+    "agent_output": {
+     "policy": "ok"
+    },
+    "founder_action": "Y",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000256",
+    "created_at": "2026-04-01T12:00:00+00:00",
+    "merchant": "Slack",
+    "amount": 960,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business+ renewal — 16 seats",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "agent_assigned": "usage_signals",
+    "agent_reasoning": "Gmail + calendar show 9 weekly actives vs 16 billed seats.",
+    "agent_output": {
+     "billed": 16,
+     "active_est": 9
+    },
+    "savings_identified": 420
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000257",
+    "created_at": "2026-03-01T12:00:00+00:00",
+    "merchant": "Slack",
+    "amount": 960,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business+",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000258",
+    "created_at": "2026-02-01T12:00:00+00:00",
+    "merchant": "Slack",
+    "amount": 960,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business+",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000259",
+    "created_at": "2026-01-01T12:00:00+00:00",
+    "merchant": "Slack",
+    "amount": 900,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business+ (prior tier mix)",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000025a",
+    "created_at": "2025-12-01T12:00:00+00:00",
+    "merchant": "Slack",
+    "amount": 900,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business+",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000025b",
+    "created_at": "2026-04-05T08:00:00+00:00",
+    "merchant": "GitHub",
+    "amount": 572,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Enterprise + Copilot Business",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "agent_assigned": "usage_signals",
+    "agent_reasoning": "4 Copilot seats show zero commits in 45d.",
+    "agent_output": {
+     "copilot_dormant": 4
+    },
+    "savings_identified": 180
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000025c",
+    "created_at": "2026-03-05T08:00:00+00:00",
+    "merchant": "GitHub",
+    "amount": 572,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Enterprise + Copilot Business",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000025d",
+    "created_at": "2026-02-05T08:00:00+00:00",
+    "merchant": "GitHub",
+    "amount": 550,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Enterprise + Copilot Business",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000025e",
+    "created_at": "2026-01-05T08:00:00+00:00",
+    "merchant": "GitHub",
+    "amount": 550,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Enterprise + Copilot Business",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000025f",
+    "created_at": "2026-04-10T06:30:00+00:00",
+    "merchant": "Vercel",
+    "amount": 186,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Pro plan + bandwidth / serverless",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000270",
+    "created_at": "2026-03-10T06:30:00+00:00",
+    "merchant": "Vercel",
+    "amount": 244,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Pro plan + overages (preview deploy spike)",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000271",
+    "created_at": "2026-02-10T06:30:00+00:00",
+    "merchant": "Vercel",
+    "amount": 198,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Pro plan + edge requests",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000272",
+    "created_at": "2026-01-10T06:30:00+00:00",
+    "merchant": "Vercel",
+    "amount": 156,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Pro plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000273",
+    "created_at": "2025-12-10T06:30:00+00:00",
+    "merchant": "Vercel",
+    "amount": 142,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Pro plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000274",
+    "created_at": "2025-11-10T06:30:00+00:00",
+    "merchant": "Vercel",
+    "amount": 128,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Pro plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000275",
+    "created_at": "2026-04-03T15:00:00+00:00",
+    "merchant": "Zoom",
+    "amount": 159.9,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Zoom One Pro — 10 licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000276",
+    "created_at": "2026-03-03T15:00:00+00:00",
+    "merchant": "Zoom",
+    "amount": 159.9,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Zoom One Pro — 10 licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000277",
+    "created_at": "2026-02-03T15:00:00+00:00",
+    "merchant": "Zoom",
+    "amount": 149.9,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Zoom One Pro — 10 licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000278",
+    "created_at": "2026-01-03T15:00:00+00:00",
+    "merchant": "Zoom",
+    "amount": 149.9,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Zoom One Pro — 10 licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000279",
+    "created_at": "2025-12-03T15:00:00+00:00",
+    "merchant": "Zoom",
+    "amount": 149.9,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Zoom One Pro — 10 licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000027a",
+    "created_at": "2026-04-12T07:00:00+00:00",
+    "merchant": "Sentry",
+    "amount": 29,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Team plan — error monitoring",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000027b",
+    "created_at": "2026-04-11T07:00:00+00:00",
+    "merchant": "Datadog",
+    "amount": 412,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Infrastructure monitoring",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000027c",
+    "created_at": "2026-04-08T07:00:00+00:00",
+    "merchant": "Google Workspace",
+    "amount": 432,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business Starter × 18 users",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000027d",
+    "created_at": "2026-04-14T07:00:00+00:00",
+    "merchant": "Salesforce",
+    "amount": 250,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Starter CRM seats (sales pod)",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000027e",
+    "created_at": "2026-04-01T07:00:00+00:00",
+    "merchant": "Loom",
+    "amount": 48,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business — 12 seats",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-00000000027f",
+    "created_at": "2026-04-09T18:20:00+00:00",
+    "merchant": "Delta Air Lines",
+    "amount": 428,
+    "category": "travel",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "memo": "SF offsite — matches calendar",
+    "status": "pending",
+    "pillar": "compliance",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000280",
+    "created_at": "2026-04-04T11:02:00+00:00",
+    "merchant": "Adobe",
+    "amount": 79.99,
+    "category": "software",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "memo": "Creative Cloud — marketing assets",
+    "status": "pending",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000281",
+    "created_at": "2026-03-28T14:10:00+00:00",
+    "merchant": "Staples",
+    "amount": 94,
+    "category": "office",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "memo": "Desk setup — SF office",
+    "status": "resolved",
+    "pillar": "compliance",
+    "agent_assigned": "compliance_agent",
+    "agent_reasoning": "Receipt matches office supply policy.",
+    "agent_output": {
+     "policy": "ok"
+    },
+    "founder_action": "Y",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000282",
+    "created_at": "2026-04-13T09:05:00+00:00",
+    "merchant": "Lyft",
+    "amount": 22,
+    "category": "travel",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "memo": "Ride to customer onsite",
+    "status": "resolved",
+    "pillar": "compliance",
+    "agent_assigned": "compliance_agent",
+    "agent_reasoning": "Under local travel cap.",
+    "agent_output": {
+     "policy": "ok"
+    },
+    "founder_action": "Y",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000283",
+    "created_at": "2026-04-06T12:40:00+00:00",
+    "merchant": "DoorDash",
+    "amount": 67,
+    "category": "meals",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "memo": "Team lunch — 4 attendees",
+    "status": "pending",
+    "pillar": "compliance",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000284",
+    "created_at": "2026-04-05T16:00:00+00:00",
+    "merchant": "Twilio",
+    "amount": 312,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Usage — SMS + Verify APIs (prod traffic)",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000285",
+    "created_at": "2026-04-02T10:00:00+00:00",
+    "merchant": "SendGrid",
+    "amount": 89.95,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Email API Pro 100k tier",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008001",
+    "created_at": "2025-11-04T11:00:00+00:00",
+    "merchant": "Evernote",
+    "amount": 59.99,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Professional plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008002",
+    "created_at": "2025-12-04T11:00:00+00:00",
+    "merchant": "Evernote",
+    "amount": 59.99,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Professional plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008003",
+    "created_at": "2026-01-06T11:00:00+00:00",
+    "merchant": "Evernote",
+    "amount": 59.99,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Professional plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008004",
+    "created_at": "2026-02-04T11:00:00+00:00",
+    "merchant": "Evernote",
+    "amount": 59.99,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Professional plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008005",
+    "created_at": "2026-03-04T11:00:00+00:00",
+    "merchant": "Evernote",
+    "amount": 59.99,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Professional plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008006",
+    "created_at": "2026-04-04T11:00:00+00:00",
+    "merchant": "Evernote",
+    "amount": 59.99,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Professional plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008007",
+    "created_at": "2025-11-05T11:00:00+00:00",
+    "merchant": "Roam",
+    "amount": 39,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Believer plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008008",
+    "created_at": "2025-12-05T11:00:00+00:00",
+    "merchant": "Roam",
+    "amount": 39,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Believer plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008009",
+    "created_at": "2026-01-05T11:00:00+00:00",
+    "merchant": "Roam",
+    "amount": 39,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Believer plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008010",
+    "created_at": "2026-02-05T11:00:00+00:00",
+    "merchant": "Roam",
+    "amount": 39,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Believer plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008011",
+    "created_at": "2026-03-05T11:00:00+00:00",
+    "merchant": "Roam",
+    "amount": 39,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Believer plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008012",
+    "created_at": "2026-04-05T11:00:00+00:00",
+    "merchant": "Roam",
+    "amount": 39,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Believer plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008013",
+    "created_at": "2025-11-06T11:00:00+00:00",
+    "merchant": "Asana",
+    "amount": 239.88,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business tier — legacy pod",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008014",
+    "created_at": "2025-12-06T11:00:00+00:00",
+    "merchant": "Asana",
+    "amount": 239.88,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business tier — legacy pod",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008015",
+    "created_at": "2026-01-06T11:00:00+00:00",
+    "merchant": "Asana",
+    "amount": 239.88,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business tier — legacy pod",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008016",
+    "created_at": "2026-02-06T11:00:00+00:00",
+    "merchant": "Asana",
+    "amount": 239.88,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business tier — legacy pod",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008017",
+    "created_at": "2026-03-06T11:00:00+00:00",
+    "merchant": "Asana",
+    "amount": 239.88,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business tier — legacy pod",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008018",
+    "created_at": "2026-04-06T11:00:00+00:00",
+    "merchant": "Asana",
+    "amount": 239.88,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business tier — legacy pod",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008019",
+    "created_at": "2025-11-07T11:00:00+00:00",
+    "merchant": "Discord",
+    "amount": 99.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Nitro + 2 boosted servers",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008020",
+    "created_at": "2025-12-07T11:00:00+00:00",
+    "merchant": "Discord",
+    "amount": 99.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Nitro + 2 boosted servers",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008021",
+    "created_at": "2026-01-07T11:00:00+00:00",
+    "merchant": "Discord",
+    "amount": 99.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Nitro + 2 boosted servers",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008022",
+    "created_at": "2026-02-07T11:00:00+00:00",
+    "merchant": "Discord",
+    "amount": 99.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Nitro + 2 boosted servers",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008023",
+    "created_at": "2026-03-07T11:00:00+00:00",
+    "merchant": "Discord",
+    "amount": 99.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Nitro + 2 boosted servers",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008024",
+    "created_at": "2026-04-07T11:00:00+00:00",
+    "merchant": "Discord",
+    "amount": 99.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Nitro + 2 boosted servers",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008025",
+    "created_at": "2025-11-08T11:00:00+00:00",
+    "merchant": "Zeplin",
+    "amount": 89,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Organization plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008026",
+    "created_at": "2025-12-08T11:00:00+00:00",
+    "merchant": "Zeplin",
+    "amount": 89,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Organization plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008027",
+    "created_at": "2026-01-08T11:00:00+00:00",
+    "merchant": "Zeplin",
+    "amount": 89,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Organization plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008028",
+    "created_at": "2026-02-08T11:00:00+00:00",
+    "merchant": "Zeplin",
+    "amount": 89,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Organization plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008029",
+    "created_at": "2026-03-08T11:00:00+00:00",
+    "merchant": "Zeplin",
+    "amount": 89,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Organization plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008030",
+    "created_at": "2026-04-08T11:00:00+00:00",
+    "merchant": "Zeplin",
+    "amount": 89,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Organization plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008031",
+    "created_at": "2025-11-09T11:00:00+00:00",
+    "merchant": "Mixpanel",
+    "amount": 199,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Growth plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008032",
+    "created_at": "2025-12-09T11:00:00+00:00",
+    "merchant": "Mixpanel",
+    "amount": 199,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Growth plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008033",
+    "created_at": "2026-01-09T11:00:00+00:00",
+    "merchant": "Mixpanel",
+    "amount": 199,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Growth plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008034",
+    "created_at": "2026-02-09T11:00:00+00:00",
+    "merchant": "Mixpanel",
+    "amount": 199,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Growth plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008035",
+    "created_at": "2026-03-09T11:00:00+00:00",
+    "merchant": "Mixpanel",
+    "amount": 199,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Growth plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008036",
+    "created_at": "2026-04-09T11:00:00+00:00",
+    "merchant": "Mixpanel",
+    "amount": 199,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Growth plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008037",
+    "created_at": "2025-11-10T11:00:00+00:00",
+    "merchant": "Amplitude",
+    "amount": 179.25,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Plus plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008038",
+    "created_at": "2025-12-10T11:00:00+00:00",
+    "merchant": "Amplitude",
+    "amount": 179.25,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Plus plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008039",
+    "created_at": "2026-01-10T11:00:00+00:00",
+    "merchant": "Amplitude",
+    "amount": 179.25,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Plus plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008040",
+    "created_at": "2026-02-10T11:00:00+00:00",
+    "merchant": "Amplitude",
+    "amount": 179.25,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Plus plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008041",
+    "created_at": "2026-03-10T11:00:00+00:00",
+    "merchant": "Amplitude",
+    "amount": 179.25,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Plus plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008042",
+    "created_at": "2026-04-10T11:00:00+00:00",
+    "merchant": "Amplitude",
+    "amount": 179.25,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Plus plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008043",
+    "created_at": "2025-11-11T11:00:00+00:00",
+    "merchant": "PostHog",
+    "amount": 79.2,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Scale — event volume tier",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008044",
+    "created_at": "2025-12-11T11:00:00+00:00",
+    "merchant": "PostHog",
+    "amount": 79.2,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Scale — event volume tier",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008045",
+    "created_at": "2026-01-11T11:00:00+00:00",
+    "merchant": "PostHog",
+    "amount": 79.2,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Scale — event volume tier",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008046",
+    "created_at": "2026-02-11T11:00:00+00:00",
+    "merchant": "PostHog",
+    "amount": 79.2,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Scale — event volume tier",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008047",
+    "created_at": "2026-03-11T11:00:00+00:00",
+    "merchant": "PostHog",
+    "amount": 79.2,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Scale — event volume tier",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008048",
+    "created_at": "2026-04-11T11:00:00+00:00",
+    "merchant": "PostHog",
+    "amount": 79.2,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Scale — event volume tier",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008049",
+    "created_at": "2025-11-12T11:00:00+00:00",
+    "merchant": "Loom",
+    "amount": 79,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business — 12 creator licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008050",
+    "created_at": "2025-12-12T11:00:00+00:00",
+    "merchant": "Loom",
+    "amount": 79,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business — 12 creator licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008051",
+    "created_at": "2026-01-12T11:00:00+00:00",
+    "merchant": "Loom",
+    "amount": 79,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business — 12 creator licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008052",
+    "created_at": "2026-02-12T11:00:00+00:00",
+    "merchant": "Loom",
+    "amount": 79,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business — 12 creator licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008053",
+    "created_at": "2026-03-12T11:00:00+00:00",
+    "merchant": "Loom",
+    "amount": 79,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business — 12 creator licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008054",
+    "created_at": "2026-04-12T11:00:00+00:00",
+    "merchant": "Loom",
+    "amount": 79,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Business — 12 creator licenses",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008055",
+    "created_at": "2026-04-01T09:00:00+00:00",
+    "merchant": "Google Workspace",
+    "amount": 0,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Meet included in Workspace (no incremental line item)",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008056",
+    "created_at": "2026-04-14T12:00:00+00:00",
+    "merchant": "ChatGPT Plus",
+    "amount": 20,
+    "category": "software",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "memo": "OpenAI consumer subscription",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008057",
+    "created_at": "2026-04-08T12:00:00+00:00",
+    "merchant": "Cursor",
+    "amount": 20,
+    "category": "software",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "memo": "Cursor Pro — duplicate of company seat",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008058",
+    "created_at": "2026-04-10T12:00:00+00:00",
+    "merchant": "Apollo.io",
+    "amount": 149,
+    "category": "software",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "memo": "Sales outbound data — card on file",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008059",
+    "created_at": "2026-04-07T12:00:00+00:00",
+    "merchant": "Replit",
+    "amount": 15,
+    "category": "software",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "memo": "Hacker plan",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008060",
+    "created_at": "2026-04-11T12:00:00+00:00",
+    "merchant": "Dribbble",
+    "amount": 20,
+    "category": "software",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "memo": "Pro portfolio",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008061",
+    "created_at": "2026-04-09T12:00:00+00:00",
+    "merchant": "Framer",
+    "amount": 45,
+    "category": "software",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "memo": "Site experiments",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008062",
+    "created_at": "2026-04-06T12:00:00+00:00",
+    "merchant": "ClickUp",
+    "amount": 19,
+    "category": "software",
+    "submitted_by": "employee",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "memo": "Unlimited tier — personal space",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008063",
+    "created_at": "2025-11-14T11:00:00+00:00",
+    "merchant": "HubSpot",
+    "amount": 397.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Marketing Hub Pro",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008064",
+    "created_at": "2025-12-14T11:00:00+00:00",
+    "merchant": "HubSpot",
+    "amount": 397.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Marketing Hub Pro",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008065",
+    "created_at": "2026-01-14T11:00:00+00:00",
+    "merchant": "HubSpot",
+    "amount": 397.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Marketing Hub Pro",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008066",
+    "created_at": "2026-02-14T11:00:00+00:00",
+    "merchant": "HubSpot",
+    "amount": 397.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Marketing Hub Pro",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008067",
+    "created_at": "2026-03-14T11:00:00+00:00",
+    "merchant": "HubSpot",
+    "amount": 397.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Marketing Hub Pro",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008068",
+    "created_at": "2026-04-14T11:00:00+00:00",
+    "merchant": "HubSpot",
+    "amount": 397.5,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Marketing Hub Pro",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008069",
+    "created_at": "2025-11-15T11:00:00+00:00",
+    "merchant": "Calendly",
+    "amount": 59.4,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Teams + routing premium",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008070",
+    "created_at": "2025-12-15T11:00:00+00:00",
+    "merchant": "Calendly",
+    "amount": 59.4,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Teams + routing premium",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008071",
+    "created_at": "2026-01-15T11:00:00+00:00",
+    "merchant": "Calendly",
+    "amount": 59.4,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Teams + routing premium",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008072",
+    "created_at": "2026-02-15T11:00:00+00:00",
+    "merchant": "Calendly",
+    "amount": 59.4,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Teams + routing premium",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008073",
+    "created_at": "2026-03-15T11:00:00+00:00",
+    "merchant": "Calendly",
+    "amount": 59.4,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Teams + routing premium",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000008074",
+    "created_at": "2026-04-15T11:00:00+00:00",
+    "merchant": "Calendly",
+    "amount": 59.4,
+    "category": "saas",
+    "submitted_by": "system",
+    "memo": "Teams + routing premium",
+    "status": "posted",
+    "pillar": "saas_sprawl",
+    "savings_identified": 0
+   }
+  ],
+  "seat": [
+   {
+    "id": "00000001-0000-4000-8000-000000000301",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "tool": "Cursor",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.95,
+    "signal_sources": [
+     "github",
+     "calendar"
+    ],
+    "commits_last_30d": 47,
+    "calendar_blocks": 6,
+    "gmail_notifications": 2,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000302",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "tool": "Cursor",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.91,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 38,
+    "calendar_blocks": 2,
+    "gmail_notifications": 0,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000303",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "tool": "Cursor",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.88,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 29,
+    "calendar_blocks": 1,
+    "gmail_notifications": 0,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000304",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "tool": "Cursor",
+    "last_active_date": "2026-04-14",
+    "confidence_score": 0.72,
+    "signal_sources": [
+     "github",
+     "calendar"
+    ],
+    "commits_last_30d": 12,
+    "calendar_blocks": 4,
+    "gmail_notifications": 1,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000305",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "tool": "Cursor",
+    "last_active_date": "2026-04-13",
+    "confidence_score": 0.61,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 8,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000306",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "tool": "Cursor",
+    "last_active_date": "2026-04-12",
+    "confidence_score": 0.55,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 6,
+    "calendar_blocks": 1,
+    "gmail_notifications": 0,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000307",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "tool": "Cursor",
+    "last_active_date": "2026-02-01",
+    "confidence_score": 0.12,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 8,
+    "gmail_notifications": 4,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000308",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "tool": "Cursor",
+    "last_active_date": "2026-01-20",
+    "confidence_score": 0.08,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 2,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000309",
+    "tool": "Cursor",
+    "last_active_date": "2025-11-10",
+    "confidence_score": 0.15,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000310",
+    "tool": "Cursor",
+    "last_active_date": "2025-10-05",
+    "confidence_score": 0.12,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000311",
+    "tool": "Cursor",
+    "last_active_date": "2025-09-22",
+    "confidence_score": 0.1,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000312",
+    "tool": "Cursor",
+    "last_active_date": "2025-12-01",
+    "confidence_score": 0.09,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000313",
+    "tool": "Cursor",
+    "last_active_date": "2026-01-05",
+    "confidence_score": 0.07,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000314",
+    "tool": "Cursor",
+    "last_active_date": "2026-02-18",
+    "confidence_score": 0.05,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000320",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "tool": "Figma",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.97,
+    "signal_sources": [
+     "calendar",
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 8,
+    "gmail_notifications": 6,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000321",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "tool": "Figma",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.89,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 5,
+    "gmail_notifications": 1,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000322",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "tool": "Figma",
+    "last_active_date": "2026-04-15",
+    "confidence_score": 0.71,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 3,
+    "gmail_notifications": 0,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000323",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "tool": "Figma",
+    "last_active_date": "2026-02-02",
+    "confidence_score": 0.22,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 1,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000324",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "tool": "Figma",
+    "last_active_date": "2026-01-18",
+    "confidence_score": 0.18,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000325",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "tool": "Figma",
+    "last_active_date": "2026-01-10",
+    "confidence_score": 0.15,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000326",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "tool": "Figma",
+    "last_active_date": "2025-12-20",
+    "confidence_score": 0.12,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000327",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "tool": "Figma",
+    "last_active_date": "2025-11-28",
+    "confidence_score": 0.11,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000328",
+    "tool": "Figma",
+    "last_active_date": "2025-10-15",
+    "confidence_score": 0.09,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000329",
+    "tool": "Figma",
+    "last_active_date": "2025-09-30",
+    "confidence_score": 0.06,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000330",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "tool": "Notion",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.82,
+    "signal_sources": [
+     "github",
+     "gmail"
+    ],
+    "commits_last_30d": 5,
+    "calendar_blocks": 3,
+    "gmail_notifications": 4,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000331",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "tool": "Notion",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.78,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 2,
+    "calendar_blocks": 2,
+    "gmail_notifications": 5,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000332",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "tool": "Notion",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.74,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 1,
+    "calendar_blocks": 1,
+    "gmail_notifications": 3,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000333",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "tool": "Notion",
+    "last_active_date": "2026-04-15",
+    "confidence_score": 0.69,
+    "signal_sources": [
+     "gmail",
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 4,
+    "gmail_notifications": 2,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000334",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "tool": "Notion",
+    "last_active_date": "2026-04-14",
+    "confidence_score": 0.63,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 2,
+    "gmail_notifications": 2,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000335",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "tool": "Notion",
+    "last_active_date": "2026-01-05",
+    "confidence_score": 0.28,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 1,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000336",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "tool": "Notion",
+    "last_active_date": "2025-12-12",
+    "confidence_score": 0.24,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 1,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000337",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "tool": "Notion",
+    "last_active_date": "2025-11-20",
+    "confidence_score": 0.19,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000338",
+    "tool": "Notion",
+    "last_active_date": "2025-10-10",
+    "confidence_score": 0.14,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000339",
+    "tool": "Notion",
+    "last_active_date": "2025-09-05",
+    "confidence_score": 0.12,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000340",
+    "tool": "Notion",
+    "last_active_date": "2025-08-22",
+    "confidence_score": 0.1,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000341",
+    "tool": "Notion",
+    "last_active_date": "2025-07-30",
+    "confidence_score": 0.08,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000350",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "tool": "Linear",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.92,
+    "signal_sources": [
+     "github",
+     "gmail"
+    ],
+    "commits_last_30d": 40,
+    "calendar_blocks": 2,
+    "gmail_notifications": 8,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000351",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "tool": "Linear",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.9,
+    "signal_sources": [
+     "github",
+     "gmail"
+    ],
+    "commits_last_30d": 35,
+    "calendar_blocks": 1,
+    "gmail_notifications": 7,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000352",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "tool": "Linear",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.87,
+    "signal_sources": [
+     "github",
+     "gmail"
+    ],
+    "commits_last_30d": 28,
+    "calendar_blocks": 1,
+    "gmail_notifications": 6,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000353",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "tool": "Linear",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.81,
+    "signal_sources": [
+     "github",
+     "gmail"
+    ],
+    "commits_last_30d": 10,
+    "calendar_blocks": 3,
+    "gmail_notifications": 4,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000354",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "tool": "Linear",
+    "last_active_date": "2026-04-15",
+    "confidence_score": 0.77,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 4,
+    "calendar_blocks": 2,
+    "gmail_notifications": 5,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000355",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "tool": "Linear",
+    "last_active_date": "2026-04-15",
+    "confidence_score": 0.73,
+    "signal_sources": [
+     "gmail",
+     "calendar"
+    ],
+    "commits_last_30d": 2,
+    "calendar_blocks": 5,
+    "gmail_notifications": 6,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T10:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000356",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "tool": "Linear",
+    "last_active_date": "2026-01-08",
+    "confidence_score": 0.2,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 1,
+    "gmail_notifications": 1,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000357",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "tool": "Linear",
+    "last_active_date": "2025-12-01",
+    "confidence_score": 0.16,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 2,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000360",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "tool": "Midjourney",
+    "last_active_date": "2026-03-28",
+    "confidence_score": 0.0,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:12:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000361",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "tool": "Midjourney",
+    "last_active_date": "2026-03-28",
+    "confidence_score": 0.0,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:12:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000362",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "tool": "Midjourney",
+    "last_active_date": "2026-03-28",
+    "confidence_score": 0.0,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:12:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000363",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "tool": "Midjourney",
+    "last_active_date": "2026-03-28",
+    "confidence_score": 0.0,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:12:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000364",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "tool": "Midjourney",
+    "last_active_date": "2026-03-28",
+    "confidence_score": 0.0,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T10:12:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000600",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "tool": "Slack",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.94,
+    "signal_sources": [
+     "gmail",
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 5,
+    "gmail_notifications": 42,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000601",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "tool": "Slack",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.91,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 2,
+    "gmail_notifications": 38,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000602",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "tool": "Slack",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.89,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 3,
+    "gmail_notifications": 35,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000603",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "tool": "Slack",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.86,
+    "signal_sources": [
+     "gmail",
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 6,
+    "gmail_notifications": 28,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000604",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "tool": "Slack",
+    "last_active_date": "2026-04-15",
+    "confidence_score": 0.81,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 1,
+    "gmail_notifications": 22,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000605",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "tool": "Slack",
+    "last_active_date": "2026-04-14",
+    "confidence_score": 0.74,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 18,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000606",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "tool": "Slack",
+    "last_active_date": "2026-04-12",
+    "confidence_score": 0.68,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 4,
+    "gmail_notifications": 12,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000607",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "tool": "Slack",
+    "last_active_date": "2026-04-10",
+    "confidence_score": 0.62,
+    "signal_sources": [
+     "gmail",
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 7,
+    "gmail_notifications": 9,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000608",
+    "tool": "Slack",
+    "last_active_date": "2026-02-01",
+    "confidence_score": 0.24,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 2,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000609",
+    "tool": "Slack",
+    "last_active_date": "2025-11-20",
+    "confidence_score": 0.14,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000610",
+    "tool": "Slack",
+    "last_active_date": "2025-10-08",
+    "confidence_score": 0.11,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000611",
+    "tool": "Slack",
+    "last_active_date": "2026-01-15",
+    "confidence_score": 0.09,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000612",
+    "tool": "Slack",
+    "last_active_date": "2025-12-02",
+    "confidence_score": 0.08,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000613",
+    "tool": "Slack",
+    "last_active_date": "2025-09-18",
+    "confidence_score": 0.06,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000614",
+    "tool": "Slack",
+    "last_active_date": "2025-08-30",
+    "confidence_score": 0.05,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000615",
+    "tool": "Slack",
+    "last_active_date": "2025-07-12",
+    "confidence_score": 0.05,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000620",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "tool": "GitHub",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.98,
+    "signal_sources": [
+     "github",
+     "gmail"
+    ],
+    "commits_last_30d": 112,
+    "calendar_blocks": 3,
+    "gmail_notifications": 6,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000621",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "tool": "GitHub",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.96,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 96,
+    "calendar_blocks": 1,
+    "gmail_notifications": 2,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000622",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "tool": "GitHub",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.95,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 88,
+    "calendar_blocks": 2,
+    "gmail_notifications": 1,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000623",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "tool": "GitHub",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.88,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 34,
+    "calendar_blocks": 1,
+    "gmail_notifications": 0,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000624",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "tool": "GitHub",
+    "last_active_date": "2026-04-15",
+    "confidence_score": 0.84,
+    "signal_sources": [
+     "github",
+     "calendar"
+    ],
+    "commits_last_30d": 18,
+    "calendar_blocks": 4,
+    "gmail_notifications": 3,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000625",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "tool": "GitHub",
+    "last_active_date": "2026-04-14",
+    "confidence_score": 0.72,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 12,
+    "calendar_blocks": 0,
+    "gmail_notifications": 1,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000626",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "tool": "GitHub",
+    "last_active_date": "2026-04-12",
+    "confidence_score": 0.58,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 4,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000627",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "tool": "GitHub",
+    "last_active_date": "2026-01-20",
+    "confidence_score": 0.22,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 2,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000628",
+    "tool": "GitHub",
+    "last_active_date": "2025-12-01",
+    "confidence_score": 0.18,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000629",
+    "tool": "GitHub",
+    "last_active_date": "2025-11-15",
+    "confidence_score": 0.15,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000630",
+    "tool": "GitHub",
+    "last_active_date": "2025-10-22",
+    "confidence_score": 0.12,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000631",
+    "tool": "GitHub",
+    "last_active_date": "2026-02-10",
+    "confidence_score": 0.1,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000632",
+    "tool": "GitHub",
+    "last_active_date": "2025-09-30",
+    "confidence_score": 0.08,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000633",
+    "tool": "GitHub",
+    "last_active_date": "2025-08-18",
+    "confidence_score": 0.07,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000634",
+    "tool": "GitHub",
+    "last_active_date": "2025-07-05",
+    "confidence_score": 0.06,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000635",
+    "tool": "GitHub",
+    "last_active_date": "2026-01-28",
+    "confidence_score": 0.05,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000636",
+    "tool": "GitHub",
+    "last_active_date": "2025-06-12",
+    "confidence_score": 0.05,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000637",
+    "tool": "GitHub",
+    "last_active_date": "2025-05-20",
+    "confidence_score": 0.05,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:05:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000640",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "tool": "Vercel",
+    "last_active_date": "2026-04-17",
+    "confidence_score": 0.93,
+    "signal_sources": [
+     "github",
+     "gmail"
+    ],
+    "commits_last_30d": 52,
+    "calendar_blocks": 1,
+    "gmail_notifications": 4,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000641",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "tool": "Vercel",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.9,
+    "signal_sources": [
+     "github",
+     "gmail"
+    ],
+    "commits_last_30d": 44,
+    "calendar_blocks": 0,
+    "gmail_notifications": 2,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000642",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "tool": "Vercel",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.88,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 38,
+    "calendar_blocks": 0,
+    "gmail_notifications": 1,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000643",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "tool": "Vercel",
+    "last_active_date": "2026-04-14",
+    "confidence_score": 0.76,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 14,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000644",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "tool": "Vercel",
+    "last_active_date": "2026-04-13",
+    "confidence_score": 0.71,
+    "signal_sources": [
+     "github",
+     "gmail"
+    ],
+    "commits_last_30d": 9,
+    "calendar_blocks": 2,
+    "gmail_notifications": 3,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000645",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "tool": "Vercel",
+    "last_active_date": "2026-04-11",
+    "confidence_score": 0.64,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 2,
+    "calendar_blocks": 0,
+    "gmail_notifications": 2,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000646",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "tool": "Vercel",
+    "last_active_date": "2026-03-01",
+    "confidence_score": 0.28,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 1,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000647",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "tool": "Vercel",
+    "last_active_date": "2025-12-18",
+    "confidence_score": 0.19,
+    "signal_sources": [
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000648",
+    "tool": "Vercel",
+    "last_active_date": "2025-10-10",
+    "confidence_score": 0.12,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000649",
+    "tool": "Vercel",
+    "last_active_date": "2025-09-02",
+    "confidence_score": 0.08,
+    "signal_sources": [
+     "github"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000650",
+    "employee_id": "00000001-0000-4000-8000-000000000013",
+    "tool": "Zoom",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.92,
+    "signal_sources": [
+     "calendar",
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 22,
+    "gmail_notifications": 8,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000651",
+    "employee_id": "00000001-0000-4000-8000-000000000012",
+    "tool": "Zoom",
+    "last_active_date": "2026-04-16",
+    "confidence_score": 0.88,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 18,
+    "gmail_notifications": 4,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000652",
+    "employee_id": "00000001-0000-4000-8000-000000000011",
+    "tool": "Zoom",
+    "last_active_date": "2026-04-15",
+    "confidence_score": 0.85,
+    "signal_sources": [
+     "calendar",
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 14,
+    "gmail_notifications": 3,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000653",
+    "employee_id": "00000001-0000-4000-8000-000000000014",
+    "tool": "Zoom",
+    "last_active_date": "2026-04-15",
+    "confidence_score": 0.82,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 11,
+    "gmail_notifications": 2,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000654",
+    "employee_id": "00000001-0000-4000-8000-000000000017",
+    "tool": "Zoom",
+    "last_active_date": "2026-04-14",
+    "confidence_score": 0.71,
+    "signal_sources": [
+     "calendar",
+     "gmail"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 6,
+    "gmail_notifications": 1,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000655",
+    "employee_id": "00000001-0000-4000-8000-000000000016",
+    "tool": "Zoom",
+    "last_active_date": "2026-04-12",
+    "confidence_score": 0.66,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 4,
+    "gmail_notifications": 0,
+    "is_dormant": false,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000656",
+    "employee_id": "00000001-0000-4000-8000-000000000015",
+    "tool": "Zoom",
+    "last_active_date": "2026-02-08",
+    "confidence_score": 0.31,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 1,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000657",
+    "employee_id": "00000001-0000-4000-8000-000000000010",
+    "tool": "Zoom",
+    "last_active_date": "2025-12-01",
+    "confidence_score": 0.18,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000658",
+    "tool": "Zoom",
+    "last_active_date": "2025-10-20",
+    "confidence_score": 0.11,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000659",
+    "tool": "Zoom",
+    "last_active_date": "2025-09-05",
+    "confidence_score": 0.08,
+    "signal_sources": [
+     "calendar"
+    ],
+    "commits_last_30d": 0,
+    "calendar_blocks": 0,
+    "gmail_notifications": 0,
+    "is_dormant": true,
+    "checked_at": "2026-04-18T11:10:00+00:00"
+   }
+  ],
+  "ai_usage": [
+   {
+    "id": "00000001-0000-4000-8000-000000000401",
+    "week_start": "2026-03-23",
+    "vendor": "anthropic",
+    "model": "claude-opus-4-6",
+    "call_count": 8200,
+    "total_tokens": 24600000,
+    "total_cost": 1240,
+    "use_case": "mixed"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000402",
+    "week_start": "2026-03-23",
+    "vendor": "openai",
+    "model": "gpt-4o",
+    "call_count": 3100,
+    "total_tokens": 9300000,
+    "total_cost": 340,
+    "use_case": "mixed"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000403",
+    "week_start": "2026-03-30",
+    "vendor": "anthropic",
+    "model": "claude-opus-4-6",
+    "call_count": 12400,
+    "total_tokens": 37200000,
+    "total_cost": 1860,
+    "use_case": "mixed"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000404",
+    "week_start": "2026-03-30",
+    "vendor": "openai",
+    "model": "gpt-4o",
+    "call_count": 3300,
+    "total_tokens": 9900000,
+    "total_cost": 340,
+    "use_case": "mixed"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000405",
+    "week_start": "2026-04-06",
+    "vendor": "anthropic",
+    "model": "claude-opus-4-6",
+    "call_count": 18600,
+    "total_tokens": 55800000,
+    "total_cost": 2790,
+    "use_case": "invoice_classification"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000406",
+    "week_start": "2026-04-06",
+    "vendor": "openai",
+    "model": "gpt-4o",
+    "call_count": 3200,
+    "total_tokens": 9600000,
+    "total_cost": 336,
+    "use_case": "mixed"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000407",
+    "week_start": "2026-04-13",
+    "vendor": "anthropic",
+    "model": "claude-opus-4-6",
+    "call_count": 38000,
+    "total_tokens": 114000000,
+    "total_cost": 5700,
+    "use_case": "invoice_classification",
+    "recommended_model": "claude-haiku-4-5",
+    "potential_savings": 2840
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000408",
+    "week_start": "2026-04-13",
+    "vendor": "openai",
+    "model": "gpt-4o",
+    "call_count": 2900,
+    "total_tokens": 8700000,
+    "total_cost": 340,
+    "use_case": "mixed"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000409",
+    "week_start": "2026-04-13",
+    "vendor": "google",
+    "model": "gemini-2.5-flash",
+    "call_count": 4200,
+    "total_tokens": 12600000,
+    "total_cost": 62,
+    "use_case": "ocr_invoices"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000410",
+    "week_start": "2026-04-06",
+    "vendor": "google",
+    "model": "gemini-2.5-flash",
+    "call_count": 3100,
+    "total_tokens": 9300000,
+    "total_cost": 48,
+    "use_case": "ocr_invoices"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000411",
+    "week_start": "2026-03-30",
+    "vendor": "mistral",
+    "model": "mistral-small-latest",
+    "call_count": 1800,
+    "total_tokens": 5400000,
+    "total_cost": 36,
+    "use_case": "batch_tagging"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000412",
+    "week_start": "2026-03-23",
+    "vendor": "mistral",
+    "model": "mistral-small-latest",
+    "call_count": 1200,
+    "total_tokens": 3600000,
+    "total_cost": 24,
+    "use_case": "batch_tagging"
+   }
+  ],
+  "alert": [
+   {
+    "id": "00000001-0000-4000-8000-000000000501",
+    "created_at": "2026-04-15T11:00:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000204",
+    "pillar": "ai_spend",
+    "alert_type": "spend_spike",
+    "message": "Anthropic bill hit $4,200 this week. Up 340%. Traced: 38K Opus calls on invoice classification at 3am. Haiku saves $2,840/mo. Deploy middleware?",
+    "requires_action": true,
+    "action_prompt": "Deploy routing middleware?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000502",
+    "created_at": "2026-04-16T09:30:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000226",
+    "pillar": "saas_sprawl",
+    "alert_type": "ghost_seat",
+    "message": "Cursor renewal in 6 days: $1,400. 14 seats, 8 active (GitHub confirms), 6 dormant 30+ days. Downgrade + 15% off saves $1,200/mo. Send email?",
+    "requires_action": true,
+    "action_prompt": "Send negotiation email?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000503",
+    "created_at": "2026-04-17T08:45:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000234",
+    "pillar": "saas_sprawl",
+    "alert_type": "zombie_sub",
+    "message": "Midjourney $200/mo: zero opens across 5 seats for 21 days. Cancel?",
+    "requires_action": true,
+    "action_prompt": "Cancel subscription?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000504",
+    "created_at": "2026-04-12T10:20:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000253",
+    "pillar": "compliance",
+    "alert_type": "policy_violation",
+    "message": "Tom R swiped $680 at Nobu. Exceeds $400 entertainment cap. Review?",
+    "requires_action": true,
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000505",
+    "created_at": "2026-04-02T20:05:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000250",
+    "pillar": "compliance",
+    "alert_type": "expense_cleared",
+    "message": "Sarah J — Capital Grille $89: client dinner memo matches calendar invite. Auto-approved.",
+    "requires_action": false,
+    "resolved": true,
+    "resolved_at": "2026-04-02T20:06:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000506",
+    "created_at": "2026-04-05T07:20:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000251",
+    "pillar": "compliance",
+    "alert_type": "expense_cleared",
+    "message": "Marcus K — Uber $34: airport trip matches conference travel block. Auto-approved.",
+    "requires_action": false,
+    "resolved": true,
+    "resolved_at": "2026-04-05T07:21:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000507",
+    "created_at": "2026-04-03T12:15:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000255",
+    "pillar": "compliance",
+    "alert_type": "expense_cleared",
+    "message": "Priya S — Blue Bottle $48: team sync under meal cap. Auto-approved.",
+    "requires_action": false,
+    "resolved": true,
+    "resolved_at": "2026-04-03T12:16:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000508",
+    "created_at": "2026-04-16T14:00:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000256",
+    "pillar": "saas_sprawl",
+    "alert_type": "ghost_seat",
+    "message": "Slack: 16 seats billed ($960/mo) but only ~9 show weekly message activity. Right-size to 10 saves ~$360/mo. Open billing portal?",
+    "requires_action": true,
+    "action_prompt": "Open Slack admin billing?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000509",
+    "created_at": "2026-04-16T15:30:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-00000000025b",
+    "pillar": "saas_sprawl",
+    "alert_type": "license_drift",
+    "message": "GitHub: Copilot-style seats show 4 accounts with zero commits in 45d while still on Enterprise bundle. Reclaim seats saves ~$180/mo.",
+    "requires_action": true,
+    "action_prompt": "Reclaim dormant GitHub seats?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000510",
+    "created_at": "2026-04-14T09:00:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-00000000025f",
+    "pillar": "saas_sprawl",
+    "alert_type": "usage_spike",
+    "message": "Vercel: April bill down vs March spike, but preview deploys still driving 38% of bandwidth. Add branch protection + stale preview cleanup?",
+    "requires_action": true,
+    "action_prompt": "Apply preview deploy policy?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000511",
+    "created_at": "2026-04-10T13:00:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-00000000027b",
+    "pillar": "saas_sprawl",
+    "alert_type": "cost_review",
+    "message": "Datadog $412: host count flat but custom metrics grew 22% WoW. Schedule rightsizing workshop with infra?",
+    "requires_action": true,
+    "action_prompt": "Schedule infra cost review?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000512",
+    "created_at": "2026-04-09T08:00:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000275",
+    "pillar": "saas_sprawl",
+    "alert_type": "license_ok",
+    "message": "Zoom: 10 licenses vs 6 recurring external meetings — within expected sales/engineering footprint. No action.",
+    "requires_action": false,
+    "resolved": true,
+    "resolved_at": "2026-04-09T08:02:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000513",
+    "created_at": "2026-04-08T08:30:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-00000000027c",
+    "pillar": "saas_sprawl",
+    "alert_type": "workspace_audit",
+    "message": "Google Workspace: 18 users vs 8 employees + 6 contractors pattern from Gmail labels. Contractor seats expected; logged.",
+    "requires_action": false,
+    "resolved": true,
+    "resolved_at": "2026-04-08T08:31:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000000514",
+    "created_at": "2026-04-07T17:00:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000284",
+    "pillar": "saas_sprawl",
+    "alert_type": "usage_ok",
+    "message": "Twilio $312 aligns with release week SMS volume (prod). No anomaly.",
+    "requires_action": false,
+    "resolved": true,
+    "resolved_at": "2026-04-07T17:01:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007080",
+    "created_at": "2026-04-17T12:00:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000008048",
+    "pillar": "saas_sprawl",
+    "alert_type": "duplicate_tool",
+    "message": "Paying for Mixpanel + Amplitude + PostHog. PostHog is cheaper and self-serve. Consolidate? $380/mo savings.",
+    "requires_action": true,
+    "action_prompt": "Consolidate analytics on PostHog?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007081",
+    "created_at": "2026-04-17T12:05:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000256",
+    "pillar": "saas_sprawl",
+    "alert_type": "renewal_warning",
+    "message": "Slack renews in 44 days but needs 30-day cancel notice. Decide by 2026-05-02. Keep Business+ at $360/mo or downgrade?",
+    "requires_action": true,
+    "action_prompt": "Open Slack renewal decision?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007082",
+    "created_at": "2026-04-17T12:10:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000000242",
+    "pillar": "saas_sprawl",
+    "alert_type": "tier_mismatch",
+    "message": "Notion on Business tier ($480/mo) but you are not using SAML, SCIM, or advanced permissions. Team tier ≈ $200/mo saves $280/mo.",
+    "requires_action": true,
+    "action_prompt": "Downgrade Notion to Team?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007083",
+    "created_at": "2026-04-17T12:15:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-00000000025b",
+    "pillar": "saas_sprawl",
+    "alert_type": "feature_waste",
+    "message": "GitHub Copilot Business: 6 of 10 seats have not triggered a completion in 30 days. Drop to 4 seats saves $114/mo.",
+    "requires_action": true,
+    "action_prompt": "Right-size Copilot seats?",
+    "resolved": false
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007084",
+    "created_at": "2026-04-17T12:20:00+00:00",
+    "transaction_id": "00000001-0000-4000-8000-000000008058",
+    "pillar": "saas_sprawl",
+    "alert_type": "shadow_it",
+    "message": "Tom R swiped Apollo.io $149/mo — no IT review, stores customer data. Approve, cancel, or migrate to company account?",
+    "requires_action": true,
+    "action_prompt": "Review Apollo.io with Tom?",
+    "resolved": false
+   }
+  ],
+  "overlap": [
+   {
+    "id": "00000001-0000-4000-8000-000000007001",
+    "category": "note_taking",
+    "tools": [
+     "Notion",
+     "Evernote",
+     "Roam"
+    ],
+    "total_monthly_cost": 580,
+    "recommended_consolidation": "Keep Notion as system of record; cancel Evernote + Roam.",
+    "estimated_savings": 100,
+    "detected_at": "2026-04-17T10:00:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007002",
+    "category": "video_conferencing",
+    "tools": [
+     "Zoom",
+     "Google Meet",
+     "Loom"
+    ],
+    "total_monthly_cost": 259.9,
+    "recommended_consolidation": "Keep Zoom for meetings; cancel Loom (Meet covered by Workspace).",
+    "estimated_savings": 80,
+    "detected_at": "2026-04-17T10:05:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007003",
+    "category": "project_mgmt",
+    "tools": [
+     "Linear",
+     "Asana"
+    ],
+    "total_monthly_cost": 640,
+    "recommended_consolidation": "Keep Linear; migrate remaining Asana boards.",
+    "estimated_savings": 240,
+    "detected_at": "2026-04-17T10:10:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007004",
+    "category": "communication",
+    "tools": [
+     "Slack",
+     "Discord"
+    ],
+    "total_monthly_cost": 460,
+    "recommended_consolidation": "Consolidate announcements to Slack; retire paid Discord servers.",
+    "estimated_savings": 100,
+    "detected_at": "2026-04-17T10:12:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007005",
+    "category": "design_handoff",
+    "tools": [
+     "Figma",
+     "Zeplin"
+    ],
+    "total_monthly_cost": 890,
+    "recommended_consolidation": "Use Figma Dev Mode / inspect; drop Zeplin.",
+    "estimated_savings": 90,
+    "detected_at": "2026-04-17T10:15:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007006",
+    "category": "analytics",
+    "tools": [
+     "Mixpanel",
+     "Amplitude",
+     "PostHog"
+    ],
+    "total_monthly_cost": 459,
+    "recommended_consolidation": "Consolidate on PostHog (self-serve + warehouse export).",
+    "estimated_savings": 380,
+    "detected_at": "2026-04-17T10:18:00+00:00",
+    "status": "pending"
+   }
+  ],
+  "renewal": [
+   {
+    "id": "00000001-0000-4000-8000-000000007010",
+    "vendor": "Cursor",
+    "plan_tier": "Team",
+    "monthly_cost": 1400,
+    "annual_cost": 16800,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-04-24",
+    "auto_renew": true,
+    "notice_period_days": 14,
+    "contract_terms": "Annual prepaid; downgrade window 14d before renewal.",
+    "last_negotiated_date": "2025-04-20",
+    "next_action_date": "2026-04-18",
+    "priority": "critical",
+    "seats_paid": 14,
+    "seats_active": 6
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007011",
+    "vendor": "Linear",
+    "plan_tier": "Business",
+    "monthly_cost": 400,
+    "billing_cycle": "monthly",
+    "renewal_date": "2026-04-28",
+    "auto_renew": true,
+    "notice_period_days": 0,
+    "contract_terms": "Month-to-month.",
+    "next_action_date": "2026-04-21",
+    "priority": "high",
+    "seats_paid": 8,
+    "seats_active": 6
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007012",
+    "vendor": "Notion",
+    "plan_tier": "Business",
+    "monthly_cost": 480,
+    "annual_cost": 5760,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-05-03",
+    "auto_renew": true,
+    "notice_period_days": 30,
+    "contract_terms": "Annual with 30d cancellation notice.",
+    "last_negotiated_date": "2025-05-01",
+    "next_action_date": "2026-04-18",
+    "priority": "high",
+    "seats_paid": 12,
+    "seats_active": 5
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007013",
+    "vendor": "Figma",
+    "plan_tier": "Organization",
+    "monthly_cost": 800,
+    "annual_cost": 9600,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-05-15",
+    "auto_renew": true,
+    "notice_period_days": 30,
+    "contract_terms": "Enterprise agreement draft on file.",
+    "last_negotiated_date": "2025-05-10",
+    "next_action_date": "2026-04-25",
+    "priority": "high",
+    "seats_paid": 10,
+    "seats_active": 3
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007014",
+    "vendor": "Vercel",
+    "plan_tier": "Pro",
+    "monthly_cost": 240,
+    "billing_cycle": "monthly",
+    "renewal_date": "2026-05-18",
+    "auto_renew": true,
+    "notice_period_days": 0,
+    "contract_terms": "Usage-based overages possible.",
+    "next_action_date": "2026-05-11",
+    "priority": "normal",
+    "seats_paid": 10,
+    "seats_active": 6
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007015",
+    "vendor": "Slack",
+    "plan_tier": "Business+",
+    "monthly_cost": 360,
+    "annual_cost": 4320,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-06-01",
+    "auto_renew": true,
+    "notice_period_days": 30,
+    "contract_terms": "Must notify by T-30 to avoid auto-renew.",
+    "last_negotiated_date": "2025-06-01",
+    "next_action_date": "2026-05-02",
+    "priority": "high",
+    "seats_paid": 16,
+    "seats_active": 8
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007016",
+    "vendor": "GitHub",
+    "plan_tier": "Enterprise",
+    "monthly_cost": 210,
+    "annual_cost": 2520,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-06-10",
+    "auto_renew": true,
+    "notice_period_days": 30,
+    "contract_terms": "GitHub Enterprise renewal.",
+    "last_negotiated_date": "2025-06-12",
+    "next_action_date": "2026-05-27",
+    "priority": "normal",
+    "seats_paid": 18,
+    "seats_active": 7
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007017",
+    "vendor": "AWS Marketplace",
+    "plan_tier": "Vendor bundle A",
+    "monthly_cost": 287,
+    "annual_cost": 3444,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-05-07",
+    "auto_renew": true,
+    "notice_period_days": 30,
+    "contract_terms": "Third-party AMI + support package.",
+    "next_action_date": "2026-04-22",
+    "priority": "high"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007018",
+    "vendor": "AWS Marketplace",
+    "plan_tier": "Security scanner",
+    "monthly_cost": 198,
+    "annual_cost": 2376,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-06-22",
+    "auto_renew": true,
+    "notice_period_days": 14,
+    "contract_terms": "Annual commit.",
+    "next_action_date": "2026-06-08",
+    "priority": "normal"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007019",
+    "vendor": "AWS Marketplace",
+    "plan_tier": "Data connector",
+    "monthly_cost": 341,
+    "annual_cost": 4092,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-07-09",
+    "auto_renew": true,
+    "notice_period_days": 30,
+    "contract_terms": "ETL connector subscription.",
+    "next_action_date": "2026-06-09",
+    "priority": "normal"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007020",
+    "vendor": "1Password",
+    "plan_tier": "Business",
+    "monthly_cost": 119.4,
+    "annual_cost": 1432.8,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-05-22",
+    "auto_renew": true,
+    "notice_period_days": 14,
+    "contract_terms": "Per-seat annual.",
+    "last_negotiated_date": "2025-05-22",
+    "next_action_date": "2026-05-15",
+    "priority": "normal"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007021",
+    "vendor": "Sentry",
+    "plan_tier": "Business",
+    "monthly_cost": 180,
+    "annual_cost": 2160,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-06-04",
+    "auto_renew": true,
+    "notice_period_days": 30,
+    "contract_terms": "Error monitoring annual.",
+    "last_negotiated_date": "2025-06-04",
+    "next_action_date": "2026-05-19",
+    "priority": "normal"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007022",
+    "vendor": "Datadog",
+    "plan_tier": "Pro",
+    "monthly_cost": 420,
+    "annual_cost": 5040,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-06-15",
+    "auto_renew": true,
+    "notice_period_days": 60,
+    "contract_terms": "Infra + APM bundle; long notice for downgrade.",
+    "last_negotiated_date": "2025-06-15",
+    "next_action_date": "2026-04-16",
+    "priority": "high"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007023",
+    "vendor": "Mailchimp",
+    "plan_tier": "Standard",
+    "monthly_cost": 89.5,
+    "billing_cycle": "monthly",
+    "renewal_date": "2026-05-12",
+    "auto_renew": true,
+    "notice_period_days": 0,
+    "contract_terms": "Marketing email tier.",
+    "next_action_date": "2026-05-05",
+    "priority": "normal"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007024",
+    "vendor": "Intercom",
+    "plan_tier": "Pro",
+    "monthly_cost": 540,
+    "annual_cost": 6480,
+    "billing_cycle": "annual",
+    "renewal_date": "2026-07-01",
+    "auto_renew": true,
+    "notice_period_days": 60,
+    "contract_terms": "Support inbox; cancel notice 60d.",
+    "last_negotiated_date": "2025-07-01",
+    "next_action_date": "2026-05-02",
+    "priority": "high"
+   }
+  ],
+  "plan_opt": [
+   {
+    "id": "00000001-0000-4000-8000-000000007030",
+    "vendor": "Notion",
+    "current_plan": "Business",
+    "current_monthly_cost": 480,
+    "recommended_plan": "Team",
+    "recommended_monthly_cost": 200,
+    "reason": "No SAML, SCIM, or advanced permissions usage in 90d.",
+    "utilization_signals": {
+     "saml_logins_30d": 0,
+     "scim_events_30d": 0,
+     "advanced_permissions_used": false,
+     "audit_log_queries_30d": 0
+    },
+    "confidence": 0.88,
+    "monthly_savings": 280,
+    "detected_at": "2026-04-16T09:00:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007031",
+    "vendor": "Linear",
+    "current_plan": "Business",
+    "current_monthly_cost": 400,
+    "recommended_plan": "Standard",
+    "recommended_monthly_cost": 280,
+    "reason": "Team under 25 seats; Business-only features unused.",
+    "utilization_signals": {
+     "business_only_views_used": false,
+     "issue_templates_advanced": 0
+    },
+    "confidence": 0.82,
+    "monthly_savings": 120,
+    "detected_at": "2026-04-16T09:05:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007032",
+    "vendor": "Slack",
+    "current_plan": "Business+",
+    "current_monthly_cost": 360,
+    "recommended_plan": "Pro",
+    "recommended_monthly_cost": 180,
+    "reason": "No compliance exports or discovery hold usage.",
+    "utilization_signals": {
+     "compliance_exports_90d": 0,
+     "legal_hold_enabled": false
+    },
+    "confidence": 0.79,
+    "monthly_savings": 180,
+    "detected_at": "2026-04-16T09:10:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007033",
+    "vendor": "Vercel",
+    "current_plan": "Pro",
+    "current_monthly_cost": 240,
+    "recommended_plan": "Hobby",
+    "recommended_monthly_cost": 220,
+    "reason": "Staging project has near-zero traffic vs prod.",
+    "utilization_signals": {
+     "staging_rps_p95": 0.02,
+     "bandwidth_gb_30d": 1.1
+    },
+    "confidence": 0.74,
+    "monthly_savings": 20,
+    "detected_at": "2026-04-16T09:12:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007034",
+    "vendor": "GitHub",
+    "current_plan": "Enterprise",
+    "current_monthly_cost": 210,
+    "recommended_plan": "Team",
+    "recommended_monthly_cost": 120,
+    "reason": "Advanced security features not configured.",
+    "utilization_signals": {
+     "secret_scanning_custom_patterns": 0,
+     "code_scanning_alerts_resolved_30d": 0
+    },
+    "confidence": 0.71,
+    "monthly_savings": 90,
+    "detected_at": "2026-04-16T09:15:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007035",
+    "vendor": "Zoom",
+    "current_plan": "Business",
+    "current_monthly_cost": 199.9,
+    "recommended_plan": "Pro",
+    "recommended_monthly_cost": 159.9,
+    "reason": "Max 3 concurrent large meetings; Business tier overkill.",
+    "utilization_signals": {
+     "concurrent_large_meetings_max": 3,
+     "webinar_addon_active": false
+    },
+    "confidence": 0.69,
+    "monthly_savings": 40,
+    "detected_at": "2026-04-16T09:18:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007036",
+    "vendor": "1Password",
+    "current_plan": "Business",
+    "current_monthly_cost": 119.4,
+    "recommended_plan": "Teams",
+    "recommended_monthly_cost": 79.6,
+    "reason": "Under 10 seats; Teams SKU fits current headcount.",
+    "utilization_signals": {
+     "seats_active": 8,
+     "business_only_policies_used": false
+    },
+    "confidence": 0.77,
+    "monthly_savings": 39.8,
+    "detected_at": "2026-04-16T09:20:00+00:00",
+    "status": "pending"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007037",
+    "vendor": "Datadog",
+    "current_plan": "Pro",
+    "current_monthly_cost": 420,
+    "recommended_plan": "Free",
+    "recommended_monthly_cost": 340,
+    "reason": "Dev-only hosts have no production traffic monitored.",
+    "utilization_signals": {
+     "dev_hosts_prod_traces_30d": 0,
+     "apm_hosts_dev": 4
+    },
+    "confidence": 0.73,
+    "monthly_savings": 80,
+    "detected_at": "2026-04-16T09:22:00+00:00",
+    "status": "pending"
+   }
+  ],
+  "feature_waste": [
+   {
+    "id": "00000001-0000-4000-8000-000000007040",
+    "vendor": "Figma",
+    "feature": "Dev Mode",
+    "monthly_cost": 150,
+    "usage_last_30d": 0,
+    "usage_last_90d": 2,
+    "first_enabled_date": "2025-08-01",
+    "last_used_date": "2026-02-15",
+    "recommendation": "disable",
+    "confidence": 0.91,
+    "status": "open"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007041",
+    "vendor": "Linear",
+    "feature": "Insights",
+    "monthly_cost": 80,
+    "usage_last_30d": 1,
+    "usage_last_90d": 3,
+    "first_enabled_date": "2025-11-10",
+    "last_used_date": "2026-03-02",
+    "recommendation": "disable",
+    "confidence": 0.86,
+    "status": "open"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007042",
+    "vendor": "Notion",
+    "feature": "Notion AI",
+    "monthly_cost": 160,
+    "usage_last_30d": 12,
+    "usage_last_90d": 41,
+    "first_enabled_date": "2025-09-01",
+    "last_used_date": "2026-04-10",
+    "recommendation": "downgrade",
+    "confidence": 0.84,
+    "status": "open"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007043",
+    "vendor": "GitHub",
+    "feature": "Copilot Business",
+    "monthly_cost": 190,
+    "usage_last_30d": 412,
+    "usage_last_90d": 1288,
+    "first_enabled_date": "2025-06-01",
+    "last_used_date": "2026-04-16",
+    "recommendation": "downgrade",
+    "confidence": 0.89,
+    "status": "open"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007044",
+    "vendor": "Slack",
+    "feature": "Workflow Builder premium",
+    "monthly_cost": 40,
+    "usage_last_30d": 0,
+    "usage_last_90d": 0,
+    "first_enabled_date": "2025-10-01",
+    "recommendation": "disable",
+    "confidence": 0.93,
+    "status": "open"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007045",
+    "vendor": "Vercel",
+    "feature": "Analytics",
+    "monthly_cost": 50,
+    "usage_last_30d": 0,
+    "usage_last_90d": 1,
+    "first_enabled_date": "2025-12-01",
+    "last_used_date": "2026-03-11",
+    "recommendation": "disable",
+    "confidence": 0.88,
+    "status": "open"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007046",
+    "vendor": "Datadog",
+    "feature": "APM add-on",
+    "monthly_cost": 200,
+    "usage_last_30d": 1200,
+    "usage_last_90d": 4100,
+    "first_enabled_date": "2025-04-01",
+    "last_used_date": "2026-04-14",
+    "recommendation": "downgrade",
+    "confidence": 0.81,
+    "status": "open"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007047",
+    "vendor": "Zoom",
+    "feature": "Webinar 500",
+    "monthly_cost": 70,
+    "usage_last_30d": 0,
+    "usage_last_90d": 0,
+    "first_enabled_date": "2025-07-01",
+    "last_used_date": "2026-01-05",
+    "recommendation": "disable",
+    "confidence": 0.9,
+    "status": "open"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007048",
+    "vendor": "Calendly",
+    "feature": "Premium routing",
+    "monthly_cost": 60,
+    "usage_last_30d": 0,
+    "usage_last_90d": 2,
+    "first_enabled_date": "2025-05-01",
+    "last_used_date": "2026-02-28",
+    "recommendation": "downgrade",
+    "confidence": 0.85,
+    "status": "open"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007049",
+    "vendor": "HubSpot",
+    "feature": "Marketing Hub Pro",
+    "monthly_cost": 400,
+    "usage_last_30d": 820,
+    "usage_last_90d": 2400,
+    "first_enabled_date": "2025-03-01",
+    "last_used_date": "2026-04-12",
+    "recommendation": "downgrade",
+    "confidence": 0.8,
+    "status": "open"
+   }
+  ],
+  "shadow_it": [
+   {
+    "id": "00000001-0000-4000-8000-000000007050",
+    "vendor": "ChatGPT Plus",
+    "first_charge_date": "2025-11-04",
+    "monthly_cost": 20,
+    "charged_to_employee_id": "00000001-0000-4000-8000-000000000011",
+    "purpose_declared": "Personal productivity experiments",
+    "approved": false,
+    "risk_level": "low",
+    "security_concerns": [
+     "no_sso",
+     "no_security_review"
+    ],
+    "detected_at": "2026-04-14T08:00:00+00:00",
+    "status": "flagged"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007051",
+    "vendor": "Cursor",
+    "first_charge_date": "2026-01-08",
+    "monthly_cost": 20,
+    "charged_to_employee_id": "00000001-0000-4000-8000-000000000014",
+    "purpose_declared": "Personal Pro on top of company seat",
+    "approved": false,
+    "risk_level": "low",
+    "security_concerns": [
+     "duplicate_license",
+     "no_security_review"
+    ],
+    "detected_at": "2026-04-14T08:05:00+00:00",
+    "status": "flagged"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007052",
+    "vendor": "Apollo.io",
+    "first_charge_date": "2025-10-19",
+    "monthly_cost": 149,
+    "charged_to_employee_id": "00000001-0000-4000-8000-000000000013",
+    "purpose_declared": "Outbound prospecting",
+    "approved": false,
+    "risk_level": "medium",
+    "security_concerns": [
+     "stores_customer_data",
+     "no_sso",
+     "third_party_integrations_unknown"
+    ],
+    "detected_at": "2026-04-14T08:10:00+00:00",
+    "status": "flagged"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007053",
+    "vendor": "Replit",
+    "first_charge_date": "2025-12-02",
+    "monthly_cost": 15,
+    "charged_to_employee_id": "00000001-0000-4000-8000-000000000015",
+    "purpose_declared": "Side prototypes",
+    "approved": false,
+    "risk_level": "low",
+    "security_concerns": [
+     "no_security_review"
+    ],
+    "detected_at": "2026-04-14T08:12:00+00:00",
+    "status": "flagged"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007054",
+    "vendor": "Dribbble",
+    "first_charge_date": "2025-09-14",
+    "monthly_cost": 20,
+    "charged_to_employee_id": "00000001-0000-4000-8000-000000000016",
+    "purpose_declared": "Portfolio visibility",
+    "approved": false,
+    "risk_level": "low",
+    "security_concerns": [
+     "personal_use",
+     "no_sso"
+    ],
+    "detected_at": "2026-04-14T08:14:00+00:00",
+    "status": "flagged"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007055",
+    "vendor": "Framer",
+    "first_charge_date": "2026-02-01",
+    "monthly_cost": 45,
+    "charged_to_employee_id": "00000001-0000-4000-8000-000000000010",
+    "purpose_declared": "Marketing microsite experiments",
+    "approved": false,
+    "risk_level": "medium",
+    "security_concerns": [
+     "might_overlap_design_stack",
+     "no_security_review"
+    ],
+    "detected_at": "2026-04-14T08:16:00+00:00",
+    "status": "flagged"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007056",
+    "vendor": "ClickUp",
+    "first_charge_date": "2025-08-21",
+    "monthly_cost": 19,
+    "charged_to_employee_id": "00000001-0000-4000-8000-000000000012",
+    "purpose_declared": "Personal task backlog",
+    "approved": false,
+    "risk_level": "medium",
+    "security_concerns": [
+     "duplicate_project_mgmt",
+     "no_sso"
+    ],
+    "detected_at": "2026-04-14T08:18:00+00:00",
+    "status": "flagged"
+   }
+  ],
+  "savings": [
+   {
+    "id": "00000001-0000-4000-8000-000000007060",
+    "title": "Analytics stack consolidation (PostHog)",
+    "amount_monthly": 380,
+    "status": "pending",
+    "source_type": "tool_overlap",
+    "source_id": "00000001-0000-4000-8000-000000007006",
+    "created_at": "2026-04-17T11:00:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007061",
+    "title": "Slack renewal decision window (30d notice)",
+    "amount_monthly": 0,
+    "status": "pending",
+    "source_type": "subscription_renewal",
+    "source_id": "00000001-0000-4000-8000-000000007015",
+    "created_at": "2026-04-17T11:02:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007062",
+    "title": "Notion Business → Team tier",
+    "amount_monthly": 280,
+    "status": "pending",
+    "source_type": "plan_optimization",
+    "source_id": "00000001-0000-4000-8000-000000007030",
+    "created_at": "2026-04-17T11:04:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007063",
+    "title": "GitHub Copilot seat right-size",
+    "amount_monthly": 114,
+    "status": "pending",
+    "source_type": "feature_waste",
+    "source_id": "00000001-0000-4000-8000-000000007043",
+    "created_at": "2026-04-17T11:06:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007064",
+    "title": "Apollo.io shadow IT review",
+    "amount_monthly": 149,
+    "status": "pending",
+    "source_type": "shadow_it",
+    "source_id": "00000001-0000-4000-8000-000000007052",
+    "created_at": "2026-04-17T11:08:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007065",
+    "title": "Note-taking overlap cleanup",
+    "amount_monthly": 100,
+    "status": "pending",
+    "source_type": "tool_overlap",
+    "source_id": "00000001-0000-4000-8000-000000007001",
+    "created_at": "2026-04-17T11:10:00+00:00"
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000007066",
+    "title": "Design handoff (Zeplin)",
+    "amount_monthly": 90,
+    "status": "pending",
+    "source_type": "tool_overlap",
+    "source_id": "00000001-0000-4000-8000-000000007005",
+    "created_at": "2026-04-17T11:12:00+00:00"
+   }
+  ],
+  "negotiation_history": [
+   {
+    "id": "00000001-0000-4000-8000-000000009001",
+    "vendor": "Cursor",
+    "initiated_date": "2025-04-20T09:00:00+00:00",
+    "original_price": 1600,
+    "target_discount": 15,
+    "outcome": "won",
+    "thread_summary": "Renewal: asked for 15% discount citing budget constraints + annual commitment; vendor agreed with 12-month term."
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000009002",
+    "vendor": "Slack",
+    "initiated_date": "2025-06-01T09:00:00+00:00",
+    "original_price": 420,
+    "target_discount": 10,
+    "outcome": "won",
+    "thread_summary": "Renewal: requested 10% reduction and seat flexibility; vendor offered 10% off plus 60-day true-down window."
+   },
+   {
+    "id": "00000001-0000-4000-8000-000000009003",
+    "vendor": "Notion",
+    "initiated_date": "2025-05-01T09:00:00+00:00",
+    "original_price": 520,
+    "target_discount": 12,
+    "outcome": "won",
+    "thread_summary": "Renewal: negotiated down tier and removed unused add-ons after usage review; saved $250/mo equivalent."
+   }
+  ],
+  "policy": [
+   {
+    "id": "policy-auto-cancel",
+    "type": "auto_cancel",
+    "enabled": true,
+    "threshold_amount": 100,
+    "threshold_days": 60,
+    "description": "Auto-cancel subscriptions under $100/mo with no usage in 60 days"
+   },
+   {
+    "id": "policy-auto-accept",
+    "type": "auto_accept_discount",
+    "enabled": true,
+    "threshold_amount": 5000,
+    "threshold_discount_pct": 10,
+    "description": "Auto-accept renewal discounts of 10%+ on contracts under $5k/mo"
+   },
+   {
+    "id": "policy-auto-approve",
+    "type": "auto_approve_expense",
+    "enabled": true,
+    "threshold_amount": 200,
+    "description": "Auto-approve expenses matching a previously approved merchant, under $200"
+   },
+   {
+    "id": "policy-prod-infra",
+    "type": "production_infra",
+    "enabled": true,
+    "production_infra_list": [
+     "AWS",
+     "GCP",
+     "Google Cloud",
+     "Azure",
+     "Cloudflare",
+     "Vercel",
+     "Railway",
+     "Render",
+     "Fly.io",
+     "Heroku",
+     "Datadog",
+     "Sentry",
+     "PagerDuty",
+     "New Relic",
+     "Fastly",
+     "Akamai"
+    ],
+    "description": "Never take autonomous action on production infrastructure vendors"
+   }
+  ]
+ }
+}
