@@ -15,7 +15,7 @@ REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}"
 BEDROCK_ENDPOINT="${BEDROCK_ENDPOINT:-runtime}"
 MODEL_FAST="${MODEL_FAST:-us.anthropic.claude-haiku-4-5-20251001-v1:0}"
 MODEL_SMART="${MODEL_SMART:-$MODEL_FAST}"
-FOUNDER_NAME="${FOUNDER_NAME:-the founder}"
+FOUNDER_NAME="${FOUNDER_NAME:-}"  # empty = template default
 CORS_ORIGINS="${CORS_ORIGINS:-http://localhost:3000}"
 
 say() { printf '\n\033[1;36m▸ %s\033[0m\n' "$*"; }
@@ -40,12 +40,17 @@ say "Building (requirements → SAM)"
 (cd infra && "${SAM[@]}" build)
 
 say "Deploying stack '$STACK' to $REGION (endpoint=$BEDROCK_ENDPOINT, models=$MODEL_FAST / $MODEL_SMART)"
+# SAM rejects "Key=" with an empty value and splits "Key=two words", so only pass optional
+# parameters that are set; the template supplies the defaults for the rest.
+OVERRIDES=("ApiToken=$TOKEN" "BedrockEndpoint=$BEDROCK_ENDPOINT" "ModelFast=$MODEL_FAST" "ModelSmart=$MODEL_SMART"
+           "CorsOrigins=$CORS_ORIGINS")
+[[ -n "${FOUNDER_NAME:-}" ]] && OVERRIDES+=("FounderName=\"$FOUNDER_NAME\"")
+[[ -n "${FOUNDER_PHONE:-}" ]] && OVERRIDES+=("FounderPhone=$FOUNDER_PHONE")
+[[ -n "${EMAIL_FROM:-}" ]] && OVERRIDES+=("EmailFrom=$EMAIL_FROM")
+[[ -n "${BRIDGE_URL:-}" ]] && OVERRIDES+=("BridgeUrl=$BRIDGE_URL")
 (cd infra && "${SAM[@]}" deploy --stack-name "$STACK" --region "$REGION" --resolve-s3 \
   --capabilities CAPABILITY_IAM --no-confirm-changeset --no-fail-on-empty-changeset \
-  --parameter-overrides \
-    "ApiToken=$TOKEN" "BedrockEndpoint=$BEDROCK_ENDPOINT" "ModelFast=$MODEL_FAST" "ModelSmart=$MODEL_SMART" \
-    "FounderName=$FOUNDER_NAME" "FounderPhone=${FOUNDER_PHONE:-}" "EmailFrom=${EMAIL_FROM:-}" \
-    "BridgeUrl=${BRIDGE_URL:-}" "CorsOrigins=$CORS_ORIGINS")
+  --parameter-overrides "${OVERRIDES[@]}")
 
 out() { aws cloudformation describe-stacks --stack-name "$STACK" --region "$REGION" \
           --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }

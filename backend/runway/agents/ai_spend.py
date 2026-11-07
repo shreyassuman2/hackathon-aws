@@ -10,7 +10,7 @@ from collections import defaultdict
 
 from runway import entities as E
 from runway import llm
-from runway.agents.grounding import is_grounded
+from runway.agents.grounding import checked
 from runway.models import Finding, TransactionIn
 from runway.persona import PERSONA
 from runway.policies import same_vendor
@@ -43,9 +43,10 @@ def _template(merchant: str, amount: float, rows: list[Record], ratio: float | N
     latest = weekly_totals(rows)[0][0]
     driver = max((r for r in rows if str(r.get("week_start")) == latest), key=lambda r: float(r.get("total_cost") or 0))
     trend = f"up {(ratio - 1) * 100:.0f}% week over week" if ratio and ratio > 1.05 else "in line with last week"
+    use_case = f" for {driver['use_case']}" if driver.get("use_case") not in (None, "", "mixed") else ""
     msg = (
         f"{merchant} bill: ${amount:,.0f}, {trend}. Biggest driver: {int(driver.get('call_count') or 0):,} "
-        f"{driver.get('model')} calls for {driver.get('use_case')}."
+        f"{driver.get('model')} calls{use_case}."
     )
     if driver.get("recommended_model") and float(driver.get("potential_savings") or 0) > 0:
         msg += (
@@ -82,11 +83,12 @@ potential_savings per month):
 {rows}
 
 Say whether this is a spike, which use_case and model drive the latest week, and the monthly
-saving from the recommended model if there is one. Don't ask a question; the approval prompt is
-added separately."""
-    message = await llm.text(prompt, system=PERSONA)
-    if not message or not is_grounded(message, prompt):
-        message = _template(txn.merchant, txn.amount, rows, ratio)
+saving from the recommended model if there is one. The approval prompt is added separately.
+Style: at most four short sentences, under 70 words. Prices in the data are per month unless labelled
+otherwise, so never call a monthly figure yearly. Do not ask a question. Only state reasons that appear in the data."""
+    message = checked(await llm.text(prompt, system=PERSONA), prompt, "ai_spend") or _template(
+        txn.merchant, txn.amount, rows, ratio
+    )
 
     requires_action = spike or best >= SAVINGS_ACTION_THRESHOLD
     return Finding(

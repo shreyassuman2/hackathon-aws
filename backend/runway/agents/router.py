@@ -13,6 +13,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 from runway import llm
+from runway.agents.compliance import flag_words
 from runway.models import Pillar, TransactionIn
 
 AI_VENDORS = {
@@ -90,6 +91,8 @@ async def route(txn: TransactionIn) -> tuple[Pillar, str]:
     """Returns (pillar, short reason)."""
     if p := known_pillar(txn):
         return p, "known vendor"
+    if txn.employee_id and flag_words(txn.merchant):
+        return "compliance", "red-flag merchant on an employee card"
 
     out = await llm.structured(
         f"""Classify this company card charge into exactly one pillar.
@@ -107,6 +110,8 @@ Pillars:
         _Route,
         tier="fast",
     )
+    if out and out.pillar == "unknown" and txn.employee_id:
+        return "compliance", "employee card; the model was unsure"
     if out:
         return out.pillar, out.reason
     # No LLM: an employee charge is almost always an expense; otherwise ask the founder.
