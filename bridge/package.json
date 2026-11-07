@@ -1,0 +1,17 @@
+{
+  "name": "runway-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mac Messages <-> Runway API bridge (macOS only)",
+  "type": "module",
+  "main": "src/index.js",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "node --watch --env-file-if-exists=../.env src/index.js",
+    "start": "node --env-file-if-exists=../.env src/index.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0"
+  }
+}
