@@ -209,9 +209,19 @@ async def vendor_opportunities(vendor: str) -> dict[str, Any]:
 async def spend_by_pillar(days: int = 30) -> dict[str, Any]:
     rows = find(get_store(), E.TRANSACTION, lambda t: (t.get("created_at") or "") >= _since(days))
     by: dict[str, float] = defaultdict(float)
+    vendors: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
     for t in rows:
-        by[t.get("pillar") or "unclassified"] += float(t.get("amount") or 0)
-    return {"days": days, "by_pillar": {k: round(v, 2) for k, v in sorted(by.items(), key=lambda kv: -kv[1])}}
+        pillar = t.get("pillar") or "unclassified"
+        amount = float(t.get("amount") or 0)
+        by[pillar] += amount
+        vendors[pillar][t["merchant"]] += amount
+    return {
+        "days": days,
+        "by_pillar": {k: round(v, 2) for k, v in sorted(by.items(), key=lambda kv: -kv[1])},
+        "top_vendors": {
+            p: {m: round(v, 2) for m, v in sorted(vs.items(), key=lambda kv: -kv[1])[:3]} for p, vs in vendors.items()
+        },
+    }
 
 
 def _tool(fn, description: str, props: dict[str, Any], required: list[str] | None = None) -> llm.Tool:
@@ -253,7 +263,11 @@ TOOLS = [
         {"vendor": {"type": "string"}},
         ["vendor"],
     ),
-    _tool(spend_by_pillar, "Total spend split by pillar (AI, SaaS, compliance) over a window.", {"days": _DAYS}),
+    _tool(
+        spend_by_pillar,
+        "Total spend split by pillar (AI, SaaS, compliance) over a window, with the top three vendors in each.",
+        {"days": _DAYS},
+    ),
     _tool(autonomous_actions, "Actions Runway took on its own under the founder's policies.", {"days": _DAYS}),
     _tool(savings_summary, "Savings identified and realized so far.", {}),
     _tool(negotiations, "Status of renewal negotiations Runway is running.", {}),
@@ -307,7 +321,7 @@ async def answer(question: str, chat_id: str = "") -> str:
         system=PERSONA
         + f"\n\nToday is {_today().isoformat()}. Answer from the tools only. Only state reasons that appear in the "
         "tool results. For spend questions name the top three vendors with dollar amounts and say the window (the tools use "
-        "days, so say 'last 30 days', not 'last month'). Never add savings together or claim a total saving. Never end with a question or an offer: a bare 'yes' from the founder approves the pending alert.",
+        "days, so say 'last 30 days', not 'last month'). Never add savings together or claim a total saving. Do not add commentary that is not in the tool results. Never end with a question or an offer: a bare 'yes' from the founder approves the pending alert.",
     )
     # Belt and braces: a reply like "Want me to...?" would make the founder's "y" approve a pending alert.
     return (strip_questions(reply) if reply else None) or await _fallback(question)
