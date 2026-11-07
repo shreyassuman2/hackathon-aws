@@ -68,3 +68,23 @@ def test_policy_patch(client, seeded):
 def test_lambda_handlers(seeded):
     assert handlers.digest_handler({"kind": "morning"})["text"].startswith("☀️ Monday brief")
     assert handlers.negotiation_handler({}, None) == {"advanced": 0}
+
+
+def test_dashboard_routes_for_frontend(client):
+    """The routes and metric keys frontend/lib/api.js reads."""
+    m = client.get("/dashboard/metrics").json()
+    for key in ("totalMonthlySpend", "identifiedSavings", "ghostSeats", "complianceFlags", "activeSubscriptions"):
+        assert isinstance(m[key], int), key
+    assert m["ghostSeats"] > 0 and m["activeSubscriptions"] > 0
+
+    trend = client.get("/dashboard/spend-trend").json()
+    assert len(trend["labels"]) == 7 and set(trend["datasets"]) == {"total", "ai", "saas", "expenses"}
+    assert sum(trend["datasets"]["total"]) > 0
+    assert client.get("/dashboard/spend-trend", params={"bucket_days": 0}).status_code == 422
+
+    subs = client.get("/subscriptions").json()
+    assert subs and subs == sorted(subs, key=lambda r: r["renewal_date"])
+    assert client.get("/seats").json()[0]["tool"]
+    assert client.get("/ai-usage").json()[0]["week_start"]
+    emps = client.get("/employees").json()
+    assert emps and set(emps[0]) == {"id", "name", "role", "email"}  # no phone numbers

@@ -7,9 +7,11 @@ approve spend, so always set it when the API is reachable from outside your lapt
 from __future__ import annotations
 
 import hmac
+from collections import defaultdict
+from datetime import UTC, datetime, timedelta
 from typing import Literal
 
-from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException
+from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -181,6 +183,13 @@ async def dashboard_metrics(days: int = 30) -> dict:
     savings = await ask.savings_summary()
     negs = store.list(E.NEGOTIATION)
     return {
+        # camelCase keys are the ones the dashboard's metric cards read (frontend/lib/api.js)
+        "totalMonthlySpend": round(sum(spend["by_pillar"].values())),
+        "identifiedSavings": round(sum(savings["monthly_by_status"].values())),
+        "ghostSeats": len(find(store, E.SEAT, lambda s: s.get("is_dormant"))),
+        "complianceFlags": len(alerts.pending(limit=1000)),
+        "activeSubscriptions": len(find(store, E.RENEWAL, lambda r: r.get("status") != "cancelled")),
+        "activeNegotiations": sum(1 for n in negs if n.get("status") in engine.ACTIVE),
         "days": days,
         "spend_total": round(sum(spend["by_pillar"].values()), 2),
         "spend_by_pillar": spend["by_pillar"],
@@ -190,6 +199,50 @@ async def dashboard_metrics(days: int = 30) -> dict:
         "negotiations_won": sum(1 for n in negs if n.get("status") == "closed_won"),
         "autonomous_actions_7d": len(await ask.autonomous_actions(7)),
     }
+
+
+@api.get("/dashboard/spend-trend")
+def spend_trend(days: int = Query(14, ge=1, le=365), bucket_days: int = Query(2, ge=1, le=31)) -> dict:
+    """Spend per pillar in `bucket_days`-day buckets over the last `days` days (the dashboard's line chart)."""
+    start = datetime.now(UTC) - timedelta(days=days)
+    n = max(1, days // bucket_days)
+    sums: dict[str, list[float]] = defaultdict(lambda: [0.0] * n)
+    for t in find(get_store(), E.TRANSACTION, lambda t: (t.get("created_at") or "") >= start.isoformat()):
+        idx = min(n - 1, (datetime.fromisoformat(t["created_at"]) - start).days // bucket_days)
+        sums[t.get("pillar") or "unknown"][idx] += float(t.get("amount") or 0)
+    ai, saas, exp = ([round(x) for x in sums[p]] for p in ("ai_spend", "saas_sprawl", "compliance"))
+    buckets = [start + timedelta(days=i * bucket_days) for i in range(n)]
+    return {
+        "labels": [f"{d:%b} {d.day}" for d in buckets],  # not strftime("%-d"): that fails on Windows
+        "datasets": {
+            "total": [a + s + e for a, s, e in zip(ai, saas, exp, strict=True)],
+            "ai": ai,
+            "saas": saas,
+            "expenses": exp,
+        },
+    }
+
+
+@api.get("/subscriptions")
+def list_subscriptions() -> list[Record]:
+    """SaaS contracts, soonest renewal first (same data as /renewals; the dashboard uses this name)."""
+    return find(get_store(), E.RENEWAL, order_by="renewal_date")
+
+
+@api.get("/seats")
+def list_seats() -> list[Record]:
+    return find(get_store(), E.SEAT, order_by="last_active_date")
+
+
+@api.get("/ai-usage")
+def list_ai_usage() -> list[Record]:
+    return find(get_store(), E.AI_USAGE, order_by="week_start", desc=True)
+
+
+@api.get("/employees")
+def list_employees() -> list[dict]:
+    # Only what the dashboard shows: no phone numbers or expense caps.
+    return [{k: e.get(k) for k in ("id", "name", "role", "email")} for e in get_store().list(E.EMPLOYEE)]
 
 
 @api.get("/savings")
