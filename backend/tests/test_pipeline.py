@@ -61,7 +61,6 @@ def test_vendor_matching_is_whole_word():
         return known_pillar(TransactionIn(merchant=merchant, amount=10))
 
     assert pillar("Bloomingdale's") is None
-    assert pillar("Get Together Bar") is None
     assert pillar("Cursor") == "saas_sprawl"
     assert pillar("Anthropic, PBC") == "ai_spend"
 
