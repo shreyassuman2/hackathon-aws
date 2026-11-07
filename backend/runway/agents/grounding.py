@@ -30,13 +30,14 @@ def is_grounded(message: str, source: str) -> bool:
     return not ungrounded_figures(message, source)
 
 
+_ASKING = re.compile(r"^(want me to|should i|shall i|do you want|would you like|ready to|can you|could you)\b", re.I)
 _SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
 
 
 def strip_questions(message: str) -> str:
-    """Drop question sentences: the approval prompt is added separately, so a second one is ambiguous."""
+    """Drop question sentences (with or without a "?"): the approval prompt is added separately, so a second one is ambiguous."""
     parts = _SENTENCE_END.split(message.strip())
-    kept = [p for p in parts if not p.rstrip().endswith("?")]
+    kept = [p for p in parts if not (p.rstrip().endswith("?") or _ASKING.match(p.strip()))]
     return " ".join(kept) if kept else message.strip()
 
 

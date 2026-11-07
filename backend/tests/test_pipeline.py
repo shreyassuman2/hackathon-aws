@@ -136,3 +136,10 @@ async def test_red_flag_merchant_on_employee_card_routes_to_compliance():
 
     pillar, _ = await route(TransactionIn(merchant="Lucky Casino", amount=300, employee_id="e1"))
     assert pillar == "compliance"
+
+
+def test_asking_sentences_without_question_mark_are_stripped():
+    from runway.agents.grounding import strip_questions
+
+    msg = "Save $2,840/month. Want me to pull a comparison first, or ready to move forward."
+    assert strip_questions(msg) == "Save $2,840/month."

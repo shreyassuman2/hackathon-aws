@@ -85,7 +85,7 @@ potential_savings per month):
 Say whether this is a spike, which use_case and model drive the latest week, and the monthly
 saving from the recommended model if there is one. The approval prompt is added separately.
 Style: at most four short sentences, under 70 words. Prices in the data are per month unless labelled
-otherwise, so never call a monthly figure yearly. Do not ask a question."""
+otherwise, so never call a monthly figure yearly. Do not ask a question. Only state reasons that appear in the data."""
     message = checked(await llm.text(prompt, system=PERSONA), prompt, "ai_spend") or _template(
         txn.merchant, txn.amount, rows, ratio
     )
