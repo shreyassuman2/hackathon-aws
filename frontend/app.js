@@ -1,6 +1,5 @@
 // ============================================================
-// RUNWAY DASHBOARD — App Controller
-// Client-side routing and tab management
+// RUNWAY DASHBOARD — app controller: routing, grade, page swap
 // ============================================================
 
 import './style.css';
@@ -8,32 +7,11 @@ import { renderNavbar, bindNavbarEvents } from './components/navbar.js';
 import { bindAlertActions } from './components/alerts.js';
 import { destroyAllCharts } from './components/charts.js';
 
-// Page imports
 import { renderDashboard, initDashboardCharts } from './pages/dashboard.js';
 import { renderAISpend, initAISpendCharts } from './pages/ai-spend.js';
 import { renderSaaSSprawl, initSaaSSprawlCharts } from './pages/saas-sprawl.js';
 import { renderCompliance, initComplianceCharts } from './pages/compliance.js';
 
-// ── State ──
-let currentTab = 'dashboard';
-let currentTheme = localStorage.getItem('theme') || 'brutalist';
-
-// ── Theme handler ──
-function toggleTheme() {
-  currentTheme = currentTheme === 'brutalist' ? 'minimal' : 'brutalist';
-  localStorage.setItem('theme', currentTheme);
-  applyTheme();
-}
-
-function applyTheme() {
-  if (currentTheme === 'minimal') {
-    document.body.classList.add('theme-minimal');
-  } else {
-    document.body.classList.remove('theme-minimal');
-  }
-}
-
-// ── Page registry ──
 const pages = {
   'dashboard': { render: renderDashboard, init: initDashboardCharts },
   'ai-spend': { render: renderAISpend, init: initAISpendCharts },
@@ -41,69 +19,70 @@ const pages = {
   'compliance': { render: renderCompliance, init: initComplianceCharts },
 };
 
-// ── Navigation handler ──
-function navigateTo(tabId) {
-  if (tabId === currentTab) return;
-  currentTab = tabId;
-  renderApp();
-  
-  // Update URL hash
-  window.location.hash = tabId;
+let currentTab = 'dashboard';
+let firstRender = true;
+
+// Pages register cleanup (pollers, listeners) here; it runs before the next page renders.
+window.runwayCleanup = [];
+function cleanup() {
+  destroyAllCharts();
+  for (const fn of window.runwayCleanup.splice(0)) {
+    try { fn(); } catch { /* ignore */ }
+  }
 }
 
-// ── Render ──
-function renderApp() {
+// ── Grade (light / evening): chosen by a click only ──
+function toggleTheme() {
+  const root = document.documentElement;
+  const dark = root.dataset.theme !== 'dark';
+  if (dark) root.dataset.theme = 'dark'; else delete root.dataset.theme;
+  try { localStorage.setItem('runway-theme', dark ? 'dark' : 'light'); } catch { /* private mode */ }
+  renderApp({ keepPosition: true }); // charts read their colours from the grade
+}
+
+function navigateTo(tabId) {
+  if (tabId === currentTab || !pages[tabId]) return;
+  currentTab = tabId;
+  window.location.hash = tabId;
+  renderApp();
+}
+
+function renderApp({ keepPosition = false } = {}) {
   const app = document.getElementById('app');
-
-  // Destroy existing charts and timers before re-rendering
-  destroyAllCharts();
-  if (window.dashboardClock) {
-    clearInterval(window.dashboardClock);
-    window.dashboardClock = null;
-  }
-
   const page = pages[currentTab];
   if (!page) return;
+  cleanup();
+  const y = window.scrollY;
 
   app.innerHTML = `
-    ${renderNavbar(currentTab, navigateTo)}
-    <main class="main-content">
+    ${renderNavbar(currentTab)}
+    <main class="main-content" id="main">
       ${page.render()}
     </main>
+    <footer class="app-footer">Runway · Product names and logos are trademarks of their owners.</footer>
   `;
 
-  // Bind nav events
+  // A click swap fades the new page in (400ms); the first paint is in place at once.
+  if (!firstRender && !keepPosition) app.querySelector('.page')?.classList.add('is-entering');
+  if (keepPosition) window.scrollTo(0, y); else if (!firstRender) window.scrollTo(0, 0);
+  firstRender = false;
+
   bindNavbarEvents(navigateTo, toggleTheme);
-
-  // Apply theme class to current page
-  applyTheme();
-
-  // Bind alert action buttons
   bindAlertActions();
-
-  // Initialize page-specific charts
   page.init();
 }
 
-// ── Init ──
 function init() {
-  // Read initial tab from URL hash
   const hash = window.location.hash.replace('#', '');
-  if (pages[hash]) {
-    currentTab = hash;
-  }
-
+  if (pages[hash]) currentTab = hash;
   renderApp();
-
-  // Handle back/forward navigation
   window.addEventListener('hashchange', () => {
-    const hash = window.location.hash.replace('#', '');
-    if (pages[hash] && hash !== currentTab) {
-      currentTab = hash;
+    const h = window.location.hash.replace('#', '');
+    if (pages[h] && h !== currentTab) {
+      currentTab = h;
       renderApp();
     }
   });
 }
 
-// Boot
 init();
