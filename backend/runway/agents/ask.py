@@ -13,6 +13,7 @@ from typing import Any
 from runway import entities as E
 from runway import llm, messaging
 from runway.agents import saas
+from runway.agents.grounding import strip_questions
 from runway.persona import PERSONA
 from runway.policies import same_vendor
 from runway.store import find, get_store
@@ -288,6 +289,10 @@ async def answer(question: str, chat_id: str = "") -> str:
     reply = await llm.tool_chat(
         [*history, {"role": "user", "content": question}],
         TOOLS,
-        system=PERSONA + f"\n\nToday is {_today().isoformat()}. Answer from the tools only.",
+        system=PERSONA
+        + f"\n\nToday is {_today().isoformat()}. Answer from the tools only. Only state reasons that appear in the "
+        "tool results. For spend questions name the vendors with dollar amounts and say the window (e.g. 'last 30 "
+        "days'). Never end with a question or an offer: a bare 'yes' from the founder approves the pending alert.",
     )
-    return reply or await _fallback(question)
+    # Belt and braces: a reply like "Want me to...?" would make the founder's "y" approve a pending alert.
+    return (strip_questions(reply) if reply else None) or await _fallback(question)

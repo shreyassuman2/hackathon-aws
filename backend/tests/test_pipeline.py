@@ -143,3 +143,14 @@ def test_asking_sentences_without_question_mark_are_stripped():
 
     msg = "Save $2,840/month. Want me to pull a comparison first, or ready to move forward."
     assert strip_questions(msg) == "Save $2,840/month."
+
+
+async def test_ask_answer_never_ends_with_an_offer(monkeypatch):
+    from runway import llm
+    from runway.agents import ask
+
+    async def fake(*a, **k):
+        return "AI spend is $9,960 in the last 30 days. Want me to break it down by vendor?"
+
+    monkeypatch.setattr(llm, "tool_chat", fake)
+    assert await ask.answer("what did we spend on AI") == "AI spend is $9,960 in the last 30 days."
