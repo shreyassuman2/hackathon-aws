@@ -15,6 +15,27 @@ jobs:
       - run: uv run ruff format --check runway tests
       - run: uv run pytest -q
 
+  bridge:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: bridge } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node --check src/index.js
+      - run: node --test  # unit tests only; the bridge itself needs macOS
+
+  # The repo is public: fail any PR or push that contains an API token, AWS key or other secret,
+  # so one can't be committed (and scraped) by accident. Scans the whole history of the change.
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   # Add back when frontend/ is committed:
   # frontend:
   #   runs-on: ubuntu-latest
