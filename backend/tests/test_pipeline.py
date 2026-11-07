@@ -161,3 +161,16 @@ async def test_vendor_opportunities_warns_against_summing():
 
     out = await ask.vendor_opportunities("Figma")
     assert "do not add them up" in out["note"]
+
+
+def test_notice_status_flags_a_passed_deadline():
+    from datetime import date
+
+    from runway.agents.ask import notice_status
+
+    today = date(2026, 11, 7)
+    late = notice_status("2026-11-13", 14, today)
+    assert late == {"cancel_by": "2026-10-30", "days_left_to_cancel": -8, "notice_window_passed": True}
+    assert notice_status("2026-12-04", 30, today)["notice_window_passed"] is True  # cancel-by was Nov 4
+    assert notice_status("2026-12-31", 30, today)["notice_window_passed"] is False
+    assert notice_status(None, 14, today) == {}
