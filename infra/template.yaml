@@ -21,6 +21,13 @@ Parameters:
     Type: String
     Default: ""
     Description: SES-verified sender for negotiation emails. Leave empty to keep mail in demo mode.
+  BedrockEndpoint:
+    Type: String
+    Default: mantle
+    AllowedValues: [mantle, runtime]
+    Description: >-
+      mantle = Claude in Amazon Bedrock (Messages API, anthropic.* model IDs).
+      runtime = classic bedrock-runtime with inference-profile IDs (what the hackathon workshop account allows).
   ModelFast:
     Type: String
     Default: anthropic.claude-haiku-5-5
@@ -51,6 +58,7 @@ Globals:
         RUNWAY_STORE: dynamodb
         RUNWAY_DYNAMODB_TABLE: !Ref Table
         RUNWAY_LLM: bedrock
+        RUNWAY_BEDROCK_ENDPOINT: !Ref BedrockEndpoint
         RUNWAY_AWS_REGION: !Ref AWS::Region
         RUNWAY_MODEL_FAST: !Ref ModelFast
         RUNWAY_MODEL_SMART: !Ref ModelSmart
@@ -99,9 +107,15 @@ Resources:
                 Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:UpdateItem, dynamodb:DeleteItem,
                          dynamodb:Query, dynamodb:BatchWriteItem]
                 Resource: !GetAtt Table.Arn
-              - Effect: Allow  # Claude in Amazon Bedrock (Messages API endpoint)
+              - Effect: Allow  # Claude in Amazon Bedrock (BedrockEndpoint=mantle)
                 Action: bedrock-mantle:CreateInference
                 Resource: "*"
+              - Effect: Allow  # classic bedrock-runtime (BedrockEndpoint=runtime). Inference profiles route
+                # across regions, so the call needs the profile AND the foundation model in each region.
+                Action: [bedrock:InvokeModel, bedrock:InvokeModelWithResponseStream]
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:bedrock:*:${AWS::AccountId}:inference-profile/*"
+                  - !Sub "arn:${AWS::Partition}:bedrock:*::foundation-model/anthropic.*"
               - Effect: Allow
                 Action: ses:SendEmail
                 Resource: "*"
