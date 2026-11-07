@@ -1,0 +1,27 @@
+# secrets
+.env
+.env.*
+!.env.example
+!frontend/.env.example
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+backend/.data/
+
+# node
+node_modules/
+dist/
+
+# aws sam
+infra/.aws-sam/
+samconfig.toml
+
+# os / editors
+.DS_Store
+.idea/
+.vscode/
+*.log

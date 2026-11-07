@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Runway - AI finance team for startups (API, negotiation worker, digests, DynamoDB).
+
+# Deploy:  cd infra && sam build && sam deploy --guided
+# See docs/DEPLOY.md for the full checklist (Bedrock model access, SES sender, token).
+
+Parameters:
+  ApiToken:
+    Type: String
+    NoEcho: true
+    MinLength: 16
+    Description: Shared secret clients send as X-Runway-Token. Generate with `openssl rand -hex 24`.
+  FounderPhone:
+    Type: String
+    Default: ""
+  FounderName:
+    Type: String
+    Default: "the founder"
+  EmailFrom:
+    Type: String
+    Default: ""
+    Description: SES-verified sender for negotiation emails. Leave empty to keep mail in demo mode.
+  ModelFast:
+    Type: String
+    Default: anthropic.claude-haiku-5-5
+  ModelSmart:
+    Type: String
+    Default: anthropic.claude-sonnet-5-5
+  BridgeUrl:
+    Type: String
+    Default: ""
+    Description: Public URL of the iMessage bridge (e.g. an ngrok/cloudflared tunnel to the demo Mac). Empty = log only.
+  CorsOrigins:
+    Type: String
+    Default: "http://localhost:3000"
+
+Conditions:
+  LiveMail: !Not [!Equals [!Ref EmailFrom, ""]]
+  HasBridge: !Not [!Equals [!Ref BridgeUrl, ""]]
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Architectures: [arm64]
+    CodeUri: ../backend/
+    MemorySize: 512
+    Timeout: 60
+    Environment:
+      Variables:
+        RUNWAY_STORE: dynamodb
+        RUNWAY_DYNAMODB_TABLE: !Ref Table
+        RUNWAY_LLM: bedrock
+        RUNWAY_AWS_REGION: !Ref AWS::Region
+        RUNWAY_MODEL_FAST: !Ref ModelFast
+        RUNWAY_MODEL_SMART: !Ref ModelSmart
+        RUNWAY_API_TOKEN: !Ref ApiToken
+        RUNWAY_FOUNDER_PHONE: !Ref FounderPhone
+        RUNWAY_FOUNDER_NAME: !Ref FounderName
+        RUNWAY_EMAIL_FROM: !Ref EmailFrom
+        RUNWAY_MAIL: !If [LiveMail, live, demo]
+        RUNWAY_NOTIFIER: !If [HasBridge, imessage, console]
+        RUNWAY_IMESSAGE_BRIDGE_URL: !Ref BridgeUrl
+        RUNWAY_CORS_ORIGINS: !Ref CorsOrigins
+
+Resources:
+  Table:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: pk, AttributeType: S }
+        - { AttributeName: sk, AttributeType: S }
+      KeySchema:
+        - { AttributeName: pk, KeyType: HASH }
+        - { AttributeName: sk, KeyType: RANGE }
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  RunwayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: runway
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:UpdateItem, dynamodb:DeleteItem,
+                         dynamodb:Query, dynamodb:BatchWriteItem]
+                Resource: !GetAtt Table.Arn
+              - Effect: Allow  # Claude in Amazon Bedrock (Messages API endpoint)
+                Action: bedrock-mantle:CreateInference
+                Resource: "*"
+              - Effect: Allow
+                Action: ses:SendEmail
+                Resource: "*"
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: runway.handlers.api_handler
+      Role: !GetAtt RunwayRole.Arn
+      Timeout: 29  # API Gateway's limit
+      Events:
+        Http:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+
+  NegotiationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: runway.handlers.negotiation_handler
+      Role: !GetAtt RunwayRole.Arn
+      Timeout: 300
+      Events:
+        EveryFiveMinutes:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: rate(5 minutes)
+
+  DigestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: runway.handlers.digest_handler
+      Role: !GetAtt RunwayRole.Arn
+      Events:
+        MondayMorning:  # 08:00 US/Pacific
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(0 8 ? * MON *)
+            ScheduleExpressionTimezone: America/Los_Angeles
+            Input: '{"kind": "morning"}'
+        FridayWrap:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(0 16 ? * FRI *)
+            ScheduleExpressionTimezone: America/Los_Angeles
+            Input: '{"kind": "weekly"}'
+
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+  TableName:
+    Value: !Ref Table
