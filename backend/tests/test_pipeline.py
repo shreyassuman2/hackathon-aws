@@ -111,3 +111,19 @@ async def test_ask_tools_cover_vendor_opportunities_and_pillars():
     out = await ask.spend_by_pillar(30)
     assert "by_pillar" in out
     assert (await ask.vendor_opportunities("Linear"))["vendor"] == "Linear"
+
+
+def test_trailing_question_is_stripped_and_ungrounded_message_rejected():
+    from runway.agents.grounding import checked, strip_trailing_question
+
+    assert strip_trailing_question("Save $800/mo. Renews Nov 13. Want me to act?") == "Save $800/mo. Renews Nov 13."
+    assert strip_trailing_question("Only a question?") == "Only a question?"
+    assert checked("Save $800/mo. Want me to act?", "saving 800", "t") == "Save $800/mo."
+    assert checked("Save $9,999/mo.", "saving 800", "t") is None
+    assert checked(None, "x", "t") is None
+
+
+def test_cap_message_says_monthly_total():
+    from runway.agents.compliance import _describe
+
+    assert _describe("over_cap:500", 725) == "$725 this month, over the $500 monthly cap"

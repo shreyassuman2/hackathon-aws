@@ -60,9 +60,10 @@ def check(txn: TransactionIn, employee: dict | None, month_spend: float = 0.0) -
     return flags
 
 
-def _describe(flag: str) -> str:
+def _describe(flag: str, month_total: float = 0.0) -> str:
     if flag.startswith("over_cap:"):
-        return f"over the ${flag.split(':', 1)[1]} cap"
+        cap = flag.split(":", 1)[1]
+        return f"${month_total:,.0f} this month, over the ${cap} monthly cap" if month_total else f"over the ${cap} cap"
     return {
         "no_memo": "no memo",
         "gambling": "looks like gambling",
@@ -75,7 +76,8 @@ def _describe(flag: str) -> str:
 async def analyze(txn: TransactionIn) -> Finding:
     employee = get_store().get(E.EMPLOYEE, txn.employee_id) if txn.employee_id else None
     name = (employee or {}).get("name") or txn.submitted_by or "Unknown"
-    flags = check(txn, employee, month_to_date(txn.employee_id, txn.id))
+    month_total = month_to_date(txn.employee_id, txn.id) + txn.amount
+    flags = check(txn, employee, month_total - txn.amount)
     if not flags:
         return Finding(
             pillar="compliance",
@@ -89,7 +91,7 @@ async def analyze(txn: TransactionIn) -> Finding:
         pillar="compliance",
         agent="compliance",
         alert_type="expense_flagged",
-        message=f"Flagged: {name} spent ${txn.amount:g} at {txn.merchant} ({', '.join(map(_describe, flags))}).",
+        message=f"Flagged: {name} spent ${txn.amount:g} at {txn.merchant} ({', '.join(_describe(f, month_total) for f in flags)}).",
         flags=flags,
         requires_action=True,
         confidence=0.9 if serious else 0.75,
