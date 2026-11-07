@@ -33,7 +33,7 @@ def _shift(value: Any, delta: timedelta) -> Any:
 
 
 def load(reset: bool = False) -> dict[str, int]:
-    data = json.loads(SEED_FILE.read_text())["entities"]
+    data = json.loads(SEED_FILE.read_text(encoding="utf-8"))["entities"]  # Windows defaults to cp1252
     # Anchor on the newest event of any kind (alerts are stamped after their transactions).
     newest = max(datetime.fromisoformat(r["created_at"]) for ent in (E.TRANSACTION, E.ALERT) for r in data[ent])
     delta = timedelta(days=(datetime.now(UTC) - newest).days - 1)
