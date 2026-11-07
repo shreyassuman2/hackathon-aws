@@ -53,7 +53,9 @@ async def handle_reply(phone: str, text: str) -> dict:
     if not threads:
         return {"status": "no_open_thread", "employee": emp["name"]}
     thread = threads[0]
-    escalate = any(w in text.lower() for w in ESCALATE_WORDS)
+    # iMessage smart punctuation turns don't into don’t.
+    normalized = text.lower().replace("\u2019", "'")
+    escalate = any(w in normalized for w in ESCALATE_WORDS)
     store.update(
         E.EMPLOYEE_THREAD,
         thread["id"],

@@ -36,6 +36,10 @@ async def _analyze(txn: TransactionIn, pillar: str) -> Finding:
         ):
             return auto
         return await compliance.analyze(txn)
+    return _unknown(txn)
+
+
+def _unknown(txn: TransactionIn) -> Finding:
     return Finding(
         pillar="unknown",
         agent="unclassified",
@@ -55,7 +59,12 @@ async def process(txn: TransactionIn) -> Record:
         txn = record_transaction(txn)
 
     pillar, reason = await router.route(txn)
-    finding = await _analyze(txn, pillar)
+    try:
+        finding = await _analyze(txn, pillar)
+    except Exception:
+        # An agent bug must not swallow the charge: ask the founder instead.
+        log.exception("analysis failed for %s (%s)", txn.merchant, pillar)
+        finding = _unknown(txn)
     store.update(
         E.TRANSACTION,
         txn.id,

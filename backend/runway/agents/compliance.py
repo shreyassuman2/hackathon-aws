@@ -7,9 +7,12 @@ If a charge is flagged and we have the employee's phone, Runway asks them about 
 
 from __future__ import annotations
 
+import re
+from datetime import UTC, datetime
+
 from runway import entities as E
 from runway.models import Finding, TransactionIn
-from runway.store import get_store
+from runway.store import find, get_store
 
 RED_FLAGS = {
     "casino": "gambling",
@@ -23,15 +26,37 @@ RED_FLAGS = {
 }
 
 
-def check(txn: TransactionIn, employee: dict | None) -> list[str]:
+def _flag_words(merchant: str) -> set[str]:
+    """Whole-word match (plurals allowed) so "Alphabet" isn't a bet and "Atmosphere" isn't an ATM."""
+    m = merchant.lower()
+    return {flag for word, flag in RED_FLAGS.items() if re.search(rf"(?<![a-z]){re.escape(word)}s?(?![a-z])", m)}
+
+
+def month_to_date(employee_id: str | None, exclude_id: str | None = None) -> float:
+    """What this employee has already charged so far this calendar month."""
+    if not employee_id:
+        return 0.0
+    start = datetime.now(UTC).strftime("%Y-%m")
+    rows = find(
+        get_store(),
+        E.TRANSACTION,
+        lambda t: (
+            t.get("employee_id") == employee_id
+            and t.get("id") != exclude_id
+            and str(t.get("created_at") or "").startswith(start)
+        ),
+    )
+    return sum(float(t.get("amount") or 0) for t in rows)
+
+
+def check(txn: TransactionIn, employee: dict | None, month_spend: float = 0.0) -> list[str]:
     flags: list[str] = []
     cap = float((employee or {}).get("monthly_expense_cap") or 0)
-    if cap and txn.amount > cap:
+    if cap and month_spend + txn.amount > cap:
         flags.append(f"over_cap:{cap:g}")
     if not (txn.memo or "").strip():
         flags.append("no_memo")
-    m = txn.merchant.lower()
-    flags.extend(sorted({flag for word, flag in RED_FLAGS.items() if word in m}))
+    flags.extend(sorted(_flag_words(txn.merchant)))
     return flags
 
 
@@ -50,7 +75,7 @@ def _describe(flag: str) -> str:
 async def analyze(txn: TransactionIn) -> Finding:
     employee = get_store().get(E.EMPLOYEE, txn.employee_id) if txn.employee_id else None
     name = (employee or {}).get("name") or txn.submitted_by or "Unknown"
-    flags = check(txn, employee)
+    flags = check(txn, employee, month_to_date(txn.employee_id, txn.id))
     if not flags:
         return Finding(
             pillar="compliance",
