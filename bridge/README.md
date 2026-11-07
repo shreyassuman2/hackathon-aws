@@ -32,17 +32,24 @@ The bridge only forwards messages and delivers what the API asks it to send. All
 
 ## With the API on AWS
 
-Point `RUNWAY_API_URL` at the `ApiUrl` output and set `RUNWAY_API_TOKEN`. For replies, Lambda must
-reach `/send`: expose port 3099 with a tunnel (`cloudflared tunnel --url http://localhost:3099`) and
-deploy with `BridgeUrl=<tunnel url>`. Set `BRIDGE_HOST=0.0.0.0` only if the tunnel needs it, since `/send`
-has no auth of its own and will text anyone.
+Point `RUNWAY_API_URL` at the `ApiUrl` output and set `RUNWAY_API_TOKEN` to the deployed token
+(`deploy.sh` saves it in `.runway-token` at the repo root). For replies, Lambda must reach `/send`:
+expose port 3099 with a tunnel (`cloudflared tunnel --url http://localhost:3099`) and deploy with
+`BridgeUrl=<tunnel url>`.
+
+**Set the token before opening the tunnel.** `/send` requires `X-Runway-Token: $RUNWAY_API_TOKEN`
+(the API sends it automatically), so nobody who finds the tunnel URL can text from this Mac. With no
+token set, `/send` only accepts direct local requests and refuses anything that came through a tunnel.
+If the token is rotated, update it here too, or replies fail with a 401 (logged by the API).
+
+Inbound messages are read from `chat.db`, so there is no inbound HTTP endpoint to protect.
 
 ## Settings
 
 | Variable | Default | |
 |---|---|---|
 | `RUNWAY_API_URL` | `http://127.0.0.1:8000` | where inbound messages go |
-| `RUNWAY_API_TOKEN` | | sent as `X-Runway-Token` |
+| `RUNWAY_API_TOKEN` | | sent as `X-Runway-Token` to the API, and required on `/send` |
 | `BRIDGE_PORT` / `BRIDGE_HOST` | `3099` / `127.0.0.1` | the `/send` endpoint |
 | `BRIDGE_POLL_MS` | `2000` | how often to check for new messages |
 | `BRIDGE_ALLOWED_SENDERS` | | comma-separated; empty + no founder phone = forward everyone |
