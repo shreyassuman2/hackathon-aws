@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     # ── LLM (Claude on Amazon Bedrock) ────────────────────────────────────────
     llm: Literal["bedrock", "off"] = "off"
     # fast = routing / classification, smart = analysis / drafting / chat
+    # "mantle" = bedrock-mantle endpoint; "runtime" = the standard bedrock-runtime endpoint (IAM-scoped
+    # accounts such as workshop roles, and inference-profile IDs like us.anthropic.claude-haiku-4-5-...).
+    bedrock_endpoint: Literal["mantle", "runtime"] = "mantle"
     model_fast: str = "anthropic.claude-haiku-5-5"
     model_smart: str = "anthropic.claude-sonnet-5-5"
 
