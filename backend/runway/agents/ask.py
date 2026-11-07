@@ -81,6 +81,17 @@ async def dormant_seats(tool: str | None = None) -> list[dict[str, Any]]:
     ]
 
 
+def notice_status(renewal_date: str | None, notice_days: Any, today: date | None = None) -> dict[str, Any]:
+    """The cancel-by date and whether it has already passed, so Claude doesn't do the date math."""
+    try:
+        renews = date.fromisoformat(str(renewal_date)[:10])
+        deadline = renews - timedelta(days=int(notice_days or 0))
+    except (TypeError, ValueError):
+        return {}
+    left = (deadline - (today or _today())).days
+    return {"cancel_by": deadline.isoformat(), "days_left_to_cancel": left, "notice_window_passed": left < 0}
+
+
 async def upcoming_renewals(days: int = 30) -> list[dict[str, Any]]:
     end = (_today() + timedelta(days=days)).isoformat()
     rows = find(
@@ -91,17 +102,20 @@ async def upcoming_renewals(days: int = 30) -> list[dict[str, Any]]:
     )
     return [
         {
-            k: r.get(k)
-            for k in (
-                "vendor",
-                "plan_tier",
-                "monthly_cost",
-                "renewal_date",
-                "auto_renew",
-                "notice_period_days",
-                "seats_paid",
-                "seats_active",
-            )
+            **{
+                k: r.get(k)
+                for k in (
+                    "vendor",
+                    "plan_tier",
+                    "monthly_cost",
+                    "renewal_date",
+                    "auto_renew",
+                    "notice_period_days",
+                    "seats_paid",
+                    "seats_active",
+                )
+            },
+            **notice_status(r.get("renewal_date"), r.get("notice_period_days")),
         }
         for r in rows
     ]
