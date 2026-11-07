@@ -1,5 +1,22 @@
 # Deploying to AWS
 
+## Fast path (workshop account)
+
+On a machine with AWS credentials (the workshop VS Code instance), from the repo root:
+
+```bash
+./infra/deploy.sh
+```
+
+It builds, deploys the stack, seeds DynamoDB, and smoke-tests the live API, including one real
+Claude call. Defaults match the workshop account (`bedrock-runtime` + the Haiku 4.5 inference
+profile). The API token is saved to `.runway-token`. If the deploy fails creating `RunwayRole`,
+the workshop role probably isn't allowed to create IAM roles; ask the organizers which role to use.
+
+The manual steps below explain what the script does and how to deploy with other settings.
+
+## Manual
+
 Prereqs: AWS account, [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html), credentials configured (`aws configure` or `AWS_PROFILE`).
 
 1. **Bedrock model access.** In the Bedrock console → Model access, check access for
