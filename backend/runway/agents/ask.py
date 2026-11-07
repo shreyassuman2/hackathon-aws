@@ -188,6 +188,7 @@ async def vendor_opportunities(vendor: str) -> dict[str, Any]:
         "vendor": vendor,
         "renewal": sig.renewal and {k: sig.renewal.get(k) for k in ("renewal_date", "monthly_cost", "plan_tier")},
         "opportunities": [{"kind": o.kind, "monthly": o.savings_monthly, "summary": o.summary} for o in opps],
+        "note": "Savings can overlap. Quote each one separately; do not add them up or claim a total.",
     }
 
 
@@ -291,8 +292,8 @@ async def answer(question: str, chat_id: str = "") -> str:
         TOOLS,
         system=PERSONA
         + f"\n\nToday is {_today().isoformat()}. Answer from the tools only. Only state reasons that appear in the "
-        "tool results. For spend questions name the vendors with dollar amounts and say the window (e.g. 'last 30 "
-        "days'). Never end with a question or an offer: a bare 'yes' from the founder approves the pending alert.",
+        "tool results. For spend questions name the top three vendors with dollar amounts and say the window (the tools use "
+        "days, so say 'last 30 days', not 'last month'). Never add savings together or claim a total saving. Never end with a question or an offer: a bare 'yes' from the founder approves the pending alert.",
     )
     # Belt and braces: a reply like "Want me to...?" would make the founder's "y" approve a pending alert.
     return (strip_questions(reply) if reply else None) or await _fallback(question)
