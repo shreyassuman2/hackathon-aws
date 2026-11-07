@@ -41,6 +41,10 @@ def send(to: str, subject: str, body: str, *, demo: bool) -> bool:
     if not s.email_from:
         log.error("RUNWAY_EMAIL_FROM is not set; cannot send live email")
         return False
+    # Last line of defence: with an override set, nothing goes anywhere else, even for deals started before it.
+    if (override := s.vendor_email_override.strip()) and to != override:
+        log.info("redirecting vendor email for %s to %s (RUNWAY_VENDOR_EMAIL_OVERRIDE)", to, override)
+        to = override
     import boto3
 
     try:
