@@ -71,9 +71,14 @@ async def _deliver(to: str, text: str) -> bool:
     if not to:
         log.warning("no recipient configured; dropping message")
         return False
+    # The bridge checks the same shared token as the API, so a tunnelled bridge can't be used by anyone else.
+    headers = {"x-runway-token": s.api_token} if s.api_token else {}
     try:
         async with httpx.AsyncClient(timeout=10) as c:
-            r = await c.post(f"{s.imessage_bridge_url}/send", json={"to": to, "text": text})
+            r = await c.post(f"{s.imessage_bridge_url}/send", json={"to": to, "text": text}, headers=headers)
+            if r.status_code in (401, 403):
+                log.warning("iMessage bridge refused the send (%s): check RUNWAY_API_TOKEN matches", r.status_code)
+                return False
             return r.status_code == 200 and bool(r.json().get("ok"))
     except httpx.HTTPError as exc:
         log.warning("iMessage bridge unreachable: %s", exc)

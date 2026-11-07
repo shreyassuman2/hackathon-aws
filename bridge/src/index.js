@@ -5,9 +5,13 @@
 //
 // The API sends its replies through POST /send (RUNWAY_NOTIFIER=imessage), so the bridge never
 // texts anything on its own. Only senders in BRIDGE_ALLOWED_SENDERS (plus the founder) are forwarded.
+//
+// POST /send requires X-Runway-Token = RUNWAY_API_TOKEN (see auth.js). Inbound messages are read
+// straight from chat.db, so there is no inbound HTTP endpoint a stranger could use to pose as the founder.
 
 import { createServer } from "node:http";
 
+import { authorize } from "./auth.js";
 import { maxRowId, newMessages, normalize, openDb, sendIMessage } from "./messages.js";
 
 const API_URL = (process.env.RUNWAY_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
@@ -85,6 +89,11 @@ function reply(res, status, body) {
 const server = createServer(async (req, res) => {
   if (req.method === "GET" && req.url === "/health") return reply(res, 200, { ok: true });
   if (req.method !== "POST" || req.url !== "/send") return reply(res, 404, { ok: false });
+  const denied = authorize(req.headers, API_TOKEN);
+  if (denied) {
+    console.warn(`[bridge] refused /send (${denied.status}): ${denied.error}`);
+    return reply(res, denied.status, { ok: false, error: denied.error });
+  }
   try {
     const { to, text } = await readJson(req);
     if (!to || !text) return reply(res, 400, { ok: false, error: "need to and text" });
@@ -99,7 +108,10 @@ if (process.platform !== "darwin") {
   console.error("[bridge] iMessage needs macOS. Use RUNWAY_NOTIFIER=console elsewhere.");
   process.exit(1);
 }
-server.listen(PORT, HOST, () => console.log(`[bridge] send endpoint on http://${HOST}:${PORT}/send`));
+server.listen(PORT, HOST, () => {
+  console.log(`[bridge] send endpoint on http://${HOST}:${PORT}/send`);
+  if (!API_TOKEN) console.warn("[bridge] RUNWAY_API_TOKEN is not set: /send only accepts direct local requests.");
+});
 pollLoop().catch((e) => {
   console.error(`[bridge] can't read ${e.message}. Give your terminal Full Disk Access (System Settings → Privacy).`);
   process.exit(1);
