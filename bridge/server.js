@@ -6,6 +6,13 @@
 //
 // Needs Full Disk Access for the terminal running it (System Settings → Privacy & Security)
 // to read incoming messages. Sending works without it.
+//
+// /send and /inbound require `X-Runway-Token: $RUNWAY_API_TOKEN` (the same token the API uses).
+// Without a token set, they only answer direct local requests: anything arriving through a tunnel
+// (it carries X-Forwarded-For / CF-Connecting-IP) is refused, so an exposed bridge can't be used to
+// send texts from this Mac or to approve things as the founder.
+
+import { timingSafeEqual } from "node:crypto";
 
 import express from "express";
 import { IMessageSDK, asRecipient } from "@photon-ai/imessage-kit";
@@ -81,7 +88,25 @@ const validRecipient = (v) => typeof v === "string" && (/^\+\d{10,15}$/.test(v) 
 
 app.get("/health", (_req, res) => res.json({ ok: true, canRead, seen: seen.size }));
 
-app.post("/send", async (req, res) => {
+const sameToken = (given) => {
+  const a = Buffer.from(String(given || ""));
+  const b = Buffer.from(API_TOKEN);
+  return a.length === b.length && timingSafeEqual(a, b);
+};
+const viaProxy = (req) => Boolean(req.get("x-forwarded-for") || req.get("cf-connecting-ip") || req.get("forwarded"));
+
+function requireToken(req, res, next) {
+  if (API_TOKEN) {
+    if (sameToken(req.get("x-runway-token"))) return next();
+    return res.status(401).json({ ok: false, error: "missing or wrong X-Runway-Token" });
+  }
+  if (viaProxy(req)) {
+    return res.status(403).json({ ok: false, error: "set RUNWAY_API_TOKEN before exposing the bridge" });
+  }
+  return next(); // local dev: no token, direct request from this machine
+}
+
+app.post("/send", requireToken, async (req, res) => {
   const { to, text } = req.body || {};
   if (!validRecipient(to) || !text) return res.status(400).json({ ok: false, error: "need to (E.164 or email) and text" });
   try {
@@ -93,7 +118,7 @@ app.post("/send", async (req, res) => {
 });
 
 // Testing without a Mac Messages DB: curl -XPOST localhost:3099/inbound -d '{"sender":"+1...","text":"y"}'
-app.post("/inbound", async (req, res) => {
+app.post("/inbound", requireToken, async (req, res) => {
   try {
     await forward(req.body || {});
     res.json({ ok: true });
@@ -102,4 +127,7 @@ app.post("/inbound", async (req, res) => {
   }
 });
 
-app.listen(PORT, "127.0.0.1", () => console.log(`[bridge] listening on http://127.0.0.1:${PORT} → ${API_URL}`));
+app.listen(PORT, "127.0.0.1", () => {
+  console.log(`[bridge] listening on http://127.0.0.1:${PORT} → ${API_URL}`);
+  if (!API_TOKEN) console.warn("[bridge] RUNWAY_API_TOKEN is not set: /send and /inbound only accept local requests.");
+});
