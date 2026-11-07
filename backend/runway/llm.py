@@ -38,9 +38,11 @@ def enabled() -> bool:
 def _get_client():
     global _client
     if _client is None:
-        from anthropic import AsyncAnthropicBedrockMantle
+        from anthropic import AsyncAnthropicBedrock, AsyncAnthropicBedrockMantle
 
-        _client = AsyncAnthropicBedrockMantle(aws_region=get_settings().aws_region, max_retries=2, timeout=60.0)
+        s = get_settings()
+        cls = AsyncAnthropicBedrock if s.bedrock_endpoint == "runtime" else AsyncAnthropicBedrockMantle
+        _client = cls(aws_region=s.aws_region, max_retries=2, timeout=60.0)
     return _client
 
 
