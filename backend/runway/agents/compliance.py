@@ -26,7 +26,7 @@ RED_FLAGS = {
 }
 
 
-def _flag_words(merchant: str) -> set[str]:
+def flag_words(merchant: str) -> set[str]:
     """Whole-word match (plurals allowed) so "Alphabet" isn't a bet and "Atmosphere" isn't an ATM."""
     m = merchant.lower()
     return {flag for word, flag in RED_FLAGS.items() if re.search(rf"(?<![a-z]){re.escape(word)}s?(?![a-z])", m)}
@@ -56,7 +56,7 @@ def check(txn: TransactionIn, employee: dict | None, month_spend: float = 0.0) -
         flags.append(f"over_cap:{cap:g}")
     if not (txn.memo or "").strip():
         flags.append("no_memo")
-    flags.extend(sorted(_flag_words(txn.merchant)))
+    flags.extend(sorted(flag_words(txn.merchant)))
     return flags
 
 

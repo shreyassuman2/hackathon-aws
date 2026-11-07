@@ -114,10 +114,11 @@ async def test_ask_tools_cover_vendor_opportunities_and_pillars():
 
 
 def test_trailing_question_is_stripped_and_ungrounded_message_rejected():
-    from runway.agents.grounding import checked, strip_trailing_question
+    from runway.agents.grounding import checked, strip_questions
 
-    assert strip_trailing_question("Save $800/mo. Renews Nov 13. Want me to act?") == "Save $800/mo. Renews Nov 13."
-    assert strip_trailing_question("Only a question?") == "Only a question?"
+    assert strip_questions("Save $800/mo. Renews Nov 13. Want me to act?") == "Save $800/mo. Renews Nov 13."
+    assert strip_questions("Only a question?") == "Only a question?"
+    assert strip_questions("No data. Can you check the sync? Will retry.") == "No data. Will retry."
     assert checked("Save $800/mo. Want me to act?", "saving 800", "t") == "Save $800/mo."
     assert checked("Save $9,999/mo.", "saving 800", "t") is None
     assert checked(None, "x", "t") is None
@@ -127,3 +128,11 @@ def test_cap_message_says_monthly_total():
     from runway.agents.compliance import _describe
 
     assert _describe("over_cap:500", 725) == "$725 this month, over the $500 monthly cap"
+
+
+async def test_red_flag_merchant_on_employee_card_routes_to_compliance():
+    from runway.agents.router import route
+    from runway.models import TransactionIn
+
+    pillar, _ = await route(TransactionIn(merchant="Lucky Casino", amount=300, employee_id="e1"))
+    assert pillar == "compliance"
