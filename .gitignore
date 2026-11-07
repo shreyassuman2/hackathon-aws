@@ -25,3 +25,6 @@ samconfig.toml
 .idea/
 .vscode/
 *.log
+
+# deploy
+.runway-token

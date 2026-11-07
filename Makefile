@@ -41,7 +41,10 @@ fmt: ## Auto-format
 requirements: ## Re-export backend/requirements.txt (used by SAM) after changing deps
 	$(BACKEND) uv export --no-dev --no-hashes --no-emit-project -q -o requirements.txt
 
+deploy-workshop: ## Deploy + seed + smoke-test on the workshop account (needs AWS creds)
+	./infra/deploy.sh
+
 deploy: requirements ## Build + deploy to AWS (see docs/DEPLOY.md first)
 	cd infra && sam build && sam deploy --guided
 
-.PHONY: help setup seed api worker frontend bridge emulator test lint fmt requirements deploy
+.PHONY: deploy-workshop help setup seed api worker frontend bridge emulator test lint fmt requirements deploy
