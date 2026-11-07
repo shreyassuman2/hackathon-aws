@@ -174,3 +174,11 @@ def test_notice_status_flags_a_passed_deadline():
     assert notice_status("2026-12-04", 30, today)["notice_window_passed"] is True  # cancel-by was Nov 4
     assert notice_status("2026-12-31", 30, today)["notice_window_passed"] is False
     assert notice_status(None, 14, today) == {}
+
+
+async def test_spend_by_pillar_includes_top_vendors():
+    from runway.agents import ask
+
+    out = await ask.spend_by_pillar(36500)
+    assert set(out["top_vendors"]) == set(out["by_pillar"])
+    assert all(len(v) <= 3 for v in out["top_vendors"].values())
