@@ -1,267 +1,205 @@
-"""Founder commands over iMessage: "cancel Notion", "negotiate Cursor to 25%", "show pending", "undo".
+"""Founder commands: "cancel Notion", "negotiate Cursor", "set auto-cancel to $50", "show pending".
 
-`parse()` tries cheap regexes first, then (with Bedrock on) asks Claude's fast tier whether a
-message is a command at all. Anything that isn't a command is a question for Ask-Anything.
-`execute()` runs a parsed command and returns the reply text.
+Commands that change money (cancel, negotiate, downgrade) never execute directly: they create a
+pending alert and the founder confirms with Y. That's the one-tap-approval rule.
 """
 
 from __future__ import annotations
 
 import re
-from datetime import date, timedelta
 from typing import Literal
 
 from pydantic import BaseModel
 
-from runway import alerts, llm, policies
+from runway import alerts, llm
 from runway import entities as E
-from runway.persona import HELP_MENU
-from runway.store import Record, find_one, get_store
+from runway.config import get_settings
+from runway.models import Finding
+from runway.negotiation import engine
+from runway.policies import same_vendor, update_threshold
+from runway.store import find, get_store
 
-Kind = Literal[
-    "help",
-    "pending",
-    "undo",
+CommandName = Literal[
     "cancel",
     "negotiate",
+    "downgrade",
+    "approve",
+    "reject",
+    "update_policy",
+    "show_pending",
     "stop_negotiation",
-    "negotiations",
-    "set_auto_cancel",
-    "none",
+    "unknown",
 ]
+
+COMMAND_PREFIX = re.compile(
+    r"^\s*(cancel|negotiate|downgrade|approve|reject|set|change|update|show pending|"
+    r"pending|stop negotiat)",
+    re.I,
+)
 
 
 class Command(BaseModel):
-    kind: Kind
+    command: CommandName
     vendor: str | None = None
-    pct: float | None = None
-    amount: float | None = None
+    seats: int | None = None
+    policy: Literal["auto_cancel", "auto_accept_discount", "auto_approve_expense"] | None = None
+    value: float | None = None
+    unit: Literal["dollars", "days", "percent"] | None = None
 
 
-_VENDOR = r"([a-z0-9][\w .&'-]*?)"
-_PATTERNS: list[tuple[str, Kind]] = [
-    (r"^(?:help|\?|menu|commands|what can you do)$", "help"),
-    (r"^(?:show |list |what'?s )?(?:pending|todo|to-do|open items)$", "pending"),
-    (r"^undo(?: that| it| last)?$", "undo"),
-    (r"^(?:stop|cancel|end) (?:the )?negotiat\w*(?: with| on| for)? " + _VENDOR + r"$", "stop_negotiation"),
-    (r"^(?:stop|cancel|end) (?:the )?" + _VENDOR + r" negotiation$", "stop_negotiation"),
-    (r"^(?:cancel|kill|drop) (?:our |the |my )?" + _VENDOR + r"(?: subscription| sub| plan)?$", "cancel"),
-    (
-        r"^negotiate (?:with |the )?"
-        + _VENDOR
-        + r"(?: renewal)?(?: (?:to|for|at|down) (\d{1,2}(?:\.\d+)?)\s?%(?: off)?)?$",
-        "negotiate",
-    ),
-    (r"^(?:negotiations|deals|negotiation status|status)$", "negotiations"),
-    (r"^(?:set )?auto[- ]?cancel (?:to |at |under |below )?\$?(\d+(?:\.\d+)?)(?:/mo)?$", "set_auto_cancel"),
-]
+def looks_like_command(text: str) -> bool:
+    return bool(COMMAND_PREFIX.match(text))
 
 
-def _clean(text: str) -> str:
-    t = text.strip().lower().replace("’", "'")
-    return re.sub(r"[.!]+$", "", t).strip()
+def parse_fallback(text: str) -> Command:
+    low = text.strip().lower()
+    m = re.match(
+        r"^(cancel|negotiate|downgrade)\s+(?:the\s+|with\s+|our\s+)?(.+?)(?:\s+renewal|\s+to\s+(\d+).*)?$", low
+    )
+    if m:
+        return Command(
+            command=m.group(1), vendor=m.group(2).strip().title(), seats=int(m.group(3)) if m.group(3) else None
+        )
+    if low.startswith(("show pending", "pending")):
+        return Command(command="show_pending")
+    if low.startswith("approve"):
+        return Command(command="approve")
+    if low.startswith("reject"):
+        return Command(command="reject")
+    if low.startswith("stop negotiat"):
+        vendor = low.split(" ", 2)[2].title() if len(low.split(" ")) > 2 else None
+        return Command(command="stop_negotiation", vendor=vendor)
+    m = re.search(
+        r"(auto[- ]?cancel|auto[- ]?accept|discount|auto[- ]?approve|expense).*?(\d+(?:\.\d+)?)\s*(%|days?)?", low
+    )
+    if m:
+        policy = (
+            "auto_cancel"
+            if "cancel" in m.group(1)
+            else "auto_accept_discount"
+            if "accept" in m.group(1) or "discount" in m.group(1)
+            else "auto_approve_expense"
+        )
+        unit = "percent" if m.group(3) == "%" else "days" if m.group(3) else "dollars"
+        return Command(command="update_policy", policy=policy, value=float(m.group(2)), unit=unit)
+    return Command(command="unknown")
 
 
-def parse_quick(text: str) -> Command | None:
-    t = _clean(text)
-    for pattern, kind in _PATTERNS:
-        m = re.match(pattern, t)
-        if not m:
-            continue
-        groups = [g for g in m.groups() if g is not None]
-        if kind == "set_auto_cancel":
-            return Command(kind=kind, amount=float(groups[0]))
-        if kind == "negotiate":
-            return Command(kind=kind, vendor=groups[0].strip(), pct=float(m.group(2)) if m.group(2) else None)
-        return Command(kind=kind, vendor=groups[0].strip() if groups else None)
-    return None
-
-
-async def parse(text: str) -> Command | None:
-    """A Command, or None when the text is a question (or chit-chat) for Ask-Anything."""
-    if cmd := parse_quick(text):
-        return cmd
-    if "?" in text:
-        return None  # questions never move money; don't spend a model call on them
+async def parse(text: str) -> Command:
     out = await llm.structured(
-        f"""A startup founder texted their AI finance assistant. Is this an instruction to DO one of
-these things? If it is a question or anything else, kind = "none".
+        f"""Parse this founder text message into a command.
 
-- cancel: cancel a SaaS subscription (vendor)
-- negotiate: negotiate a vendor's renewal price (vendor, optional target pct)
-- stop_negotiation: stop an ongoing negotiation (vendor)
-- pending: show items waiting for approval
-- undo: reverse the last automatic action
-- negotiations: show negotiation status
-- set_auto_cancel: change the auto-cancel threshold (amount in $/mo)
-- help: what can you do
+Message: {text}
 
-Message: {text!r}""",
+Commands: cancel <vendor>, negotiate <vendor> (renewal discount), downgrade <vendor> [to N seats],
+approve / reject (the latest pending item), show_pending, stop_negotiation <vendor>,
+update_policy (policy: auto_cancel | auto_accept_discount | auto_approve_expense; value + unit),
+unknown (not a command).""",
         Command,
         tier="fast",
     )
-    if out is None or out.kind == "none":
-        return None
-    if out.kind in ("cancel", "negotiate", "stop_negotiation") and not out.vendor:
-        return None
-    return out
+    return out or parse_fallback(text)
 
 
-# ── helpers ───────────────────────────────────────────────────────────────────
+def _renewal(vendor: str):
+    rows = find(get_store(), E.RENEWAL, lambda r: same_vendor(r.get("vendor", ""), vendor), order_by="renewal_date")
+    return rows[0] if rows else None
 
 
-def _renewal(vendor: str) -> Record | None:
-    return find_one(
-        get_store(),
-        E.RENEWAL,
-        lambda r: policies.same_vendor(r.get("vendor", ""), vendor) and r.get("status") != "cancelled",
-        order_by="renewal_date",
-    )
+async def run(text: str) -> str:
+    cmd = await parse(text)
+    s = get_settings()
 
+    if cmd.command in ("cancel", "negotiate", "downgrade") and not cmd.vendor:
+        return f"Which vendor should I {cmd.command}?"
 
-def _title(vendor: str) -> str:
-    return vendor if any(c.isupper() for c in vendor) else vendor.title()
-
-
-def _date(d: str | None) -> date | None:
-    try:
-        return date.fromisoformat(str(d)[:10]) if d else None
-    except ValueError:
-        return None
-
-
-def pending_lines(limit: int = 5) -> list[Record]:
-    """The numbered list a founder can answer with "Y 2". Same order as `alerts.pending()`."""
-    return alerts.pending(limit)
-
-
-# ── command handlers ──────────────────────────────────────────────────────────
-
-
-def _pending() -> str:
-    rows = pending_lines()
-    if not rows:
-        return "Nothing is waiting on you. 🎉"
-    lines = [f"{i}. {a['message'][:140]}" for i, a in enumerate(rows, 1)]
-    return "Waiting on you:\n" + "\n".join(lines) + "\n\nReply Y 1 / N 1 (etc.) to answer one."
-
-
-def _undo() -> str:
-    store = get_store()
-    act = find_one(
-        store,
-        E.POLICY_ACTION,
-        lambda a: a.get("undo_available") and not a.get("undone"),
-        order_by="executed_at",
-        desc=True,
-    )
-    if not act:
-        return "There's nothing to undo."
-    store.update(E.POLICY_ACTION, act["id"], {"undone": True, "undo_available": False})
-    vendor = act.get("entity_name") or "that"
-    if act.get("action_type") == "auto_cancel":
-        if r := find_one(store, E.RENEWAL, lambda r: policies.same_vendor(r.get("vendor", ""), vendor)):
-            store.update(E.RENEWAL, r["id"], {"status": "active"})
-        return f"Undone: {vendor} is back on. I won't auto-cancel it again without asking."
-    return f"Undone: {act.get('action_type', 'action').replace('_', ' ')} on {vendor}."
-
-
-def _cancel(vendor: str) -> str:
-    from runway.negotiation import engine
-
-    store = get_store()
-    r = _renewal(vendor)
-    if not r:
-        return f"I don't see an active {_title(vendor)} subscription."
-    name = r["vendor"]
-    monthly = float(r.get("monthly_cost") or 0)
-    store.update(E.RENEWAL, r["id"], {"status": "cancelled", "auto_renew": False})
-    store.put(
-        E.SAVINGS,
-        {
-            "title": f"Cancel {name}",
-            "amount_monthly": monthly,
-            "status": "approved",
-            "source_type": "founder_command",
-            "source_id": r["id"],
-        },
-    )
-    if neg := engine.active_for(name):
-        engine.cancel(neg["id"])
-
-    msg = f"Marked {name} for cancellation: saves ${monthly:,.0f}/mo (${monthly * 12:,.0f}/yr)."
-    renews, notice = _date(r.get("renewal_date")), int(r.get("notice_period_days") or 0)
-    if renews:
-        deadline = renews - timedelta(days=notice)
-        msg += (
-            f" It renews {renews:%b} {renews.day}, so it has to be cancelled in {name}'s billing settings"
-            f" by {deadline:%b} {deadline.day}."
+    if cmd.command == "cancel":
+        r = _renewal(cmd.vendor)
+        cost = float(r.get("monthly_cost") or 0) if r else 0.0
+        vendor = r["vendor"] if r else cmd.vendor
+        detail = f" (${cost:,.0f}/mo, renews {r.get('renewal_date')})" if r else ""
+        await alerts.raise_alert(
+            Finding(
+                pillar="saas_sprawl",
+                agent="command",
+                alert_type="cancel_requested",
+                requires_action=True,
+                confidence=1.0,
+                savings_monthly=cost,
+                message=f"Cancel {vendor}{detail}? I'll email them the cancellation.",
+                action_prompt="Send the cancellation?",
+                metadata={"vendor": vendor, "price": cost},
+            )
         )
-    if policies.is_production_infra(name):
-        msg += " Heads up: it's on your production-infra list."
-    return msg
+        return ""  # the alert itself is the reply
 
+    if cmd.command == "negotiate":
+        r = _renewal(cmd.vendor)
+        price = float(r.get("monthly_cost") or 0) if r else 0.0
+        if not price:
+            return (
+                f"I don't have contract details for {cmd.vendor}. Tell me the monthly price, e.g. 'negotiate "
+                f"{cmd.vendor} at $500'."
+            )
+        vendor = r["vendor"]
+        target = s.negotiation_default_target_pct
+        seats = ""
+        if r.get("seats_paid") and r.get("seats_active") is not None and r["seats_paid"] > r["seats_active"]:
+            seats = f" {r['seats_paid'] - r['seats_active']} of {r['seats_paid']} seats are dormant, which helps us."
+        await alerts.raise_alert(
+            Finding(
+                pillar="saas_sprawl",
+                agent="command",
+                alert_type="negotiate_offer",
+                requires_action=True,
+                confidence=1.0,
+                savings_monthly=price * target / 100,
+                message=f"{vendor} is ${price:,.0f}/mo and renews {r.get('renewal_date')}.{seats} I'll ask for {target:g}% "
+                f"off (~${price * target / 100:,.0f}/mo) and handle the back-and-forth by email.",
+                action_prompt=f"Start negotiating with {vendor}?",
+                metadata={"vendor": vendor, "price": price, "target_pct": target},
+            )
+        )
+        return ""
 
-async def _negotiate(vendor: str, pct: float | None) -> str | None:
-    from runway.negotiation import engine
+    if cmd.command == "downgrade":
+        to = f" to {cmd.seats} seats" if cmd.seats else " to a cheaper plan"
+        await alerts.raise_alert(
+            Finding(
+                pillar="saas_sprawl",
+                agent="command",
+                alert_type="downgrade_requested",
+                requires_action=True,
+                confidence=1.0,
+                message=f"Downgrade {cmd.vendor}{to}? I'll email their billing team.",
+                action_prompt="Send the downgrade request?",
+                metadata={"vendor": cmd.vendor, "seats": cmd.seats},
+            )
+        )
+        return ""
 
-    r = _renewal(vendor)
-    if not r:
-        return f"I don't have {_title(vendor)}'s contract on file, so I don't know the price to negotiate from."
-    neg, created = engine.start(r["vendor"], float(r.get("monthly_cost") or 0), target_pct=pct)
-    if not created:
-        return f"Already negotiating with {neg['vendor']} (round {neg.get('round', 0)}, {neg['status']})."
-    await engine.tick(neg["id"])  # sends the opening email and texts the founder that it went out
-    return None
+    if cmd.command in ("approve", "reject"):
+        from runway.conversation import handle_yes_no
 
+        return await handle_yes_no(cmd.command == "approve")
 
-def _negotiations() -> str:
-    from runway.negotiation import engine
+    if cmd.command == "show_pending":
+        items = alerts.pending()
+        if not items:
+            return "Nothing waiting on you. 🎉"
+        return "Waiting on you:\n" + "\n".join(f"{i + 1}. {a['message'][:90]}" for i, a in enumerate(items))
 
-    rows = engine.list_negotiations(5)
-    if not rows:
-        return "No negotiations yet. Try: negotiate Cursor"
-    out = []
-    for n in rows:
-        offer = f", their offer {n['current_offer_pct']:g}%" if n.get("current_offer_pct") is not None else ""
-        out.append(f"• {n['vendor']}: {n['status'].replace('_', ' ')} (round {n.get('round', 0)}{offer})")
-    return "\n".join(out)
+    if cmd.command == "stop_negotiation":
+        n = engine.active_for(cmd.vendor or "")
+        if not n:
+            return "No active negotiation for that vendor."
+        engine.cancel(n["id"])
+        return f"Stopped the {n['vendor']} negotiation."
 
+    if cmd.command == "update_policy" and cmd.policy and cmd.value is not None:
+        field = {"days": "threshold_days", "percent": "threshold_discount_pct"}.get(cmd.unit or "", "threshold_amount")
+        if not update_threshold(cmd.policy, field, int(cmd.value) if field == "threshold_days" else cmd.value):
+            return "I couldn't find that policy."
+        return f"Updated {cmd.policy.replace('_', ' ')}: {field.replace('_', ' ')} is now {cmd.value:g}."
 
-def _set_auto_cancel(amount: float) -> str:
-    if policies.update_threshold("auto_cancel", "threshold_amount", amount) is None:
-        return "You don't have an auto-cancel rule set up."
-    return f"Done. I'll auto-cancel unused subscriptions under ${amount:g}/mo (and always tell you)."
-
-
-async def execute(cmd: Command) -> str | None:
-    """Run a command. Returns the reply, or None when the action already texted the founder itself."""
-    match cmd.kind:
-        case "help":
-            return HELP_MENU
-        case "pending":
-            return _pending()
-        case "undo":
-            return _undo()
-        case "cancel":
-            return _cancel(cmd.vendor or "")
-        case "negotiate":
-            return await _negotiate(cmd.vendor or "", cmd.pct)
-        case "stop_negotiation":
-            from runway.negotiation import engine
-
-            neg = engine.active_for(cmd.vendor or "")
-            if not neg:
-                return f"I'm not negotiating with {_title(cmd.vendor or '')} right now."
-            engine.cancel(neg["id"])
-            return f"Stopped the {neg['vendor']} negotiation. I won't email them again."
-        case "negotiations":
-            return _negotiations()
-        case "set_auto_cancel":
-            return _set_auto_cancel(cmd.amount or 0)
-    return None
-
-
-def find_pending_by_index(i: int) -> Record | None:
-    rows = pending_lines()
-    return rows[i - 1] if 1 <= i <= len(rows) else None
+    return "I didn't catch that. Text 'help' for what I can do."

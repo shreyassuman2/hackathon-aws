@@ -1,121 +1,179 @@
-"""Inbound iMessage routing.
+"""Inbound iMessage handling: who sent it, what kind of message it is, what to do.
 
-    sender is an employee (not the founder) ─▶ employees.handle_reply
-    "y" / "n" / "y 2"                         ─▶ answer the latest (or #2) pending alert
-    "cancel Notion", "show pending", ...      ─▶ agents.commands
-    anything else                             ─▶ Ask-Anything
-
-Y/N is an exact-word match on the whole message ("today" is not "y", "no way that's right?" is a
-question). A bare Y answers the newest alert the founder was actually sent.
+employee? ──▶ employees.handle_reply
+menu word ──▶ help text
+Y / N     ──▶ resolve the latest pending alert and carry out the approved action
+command   ──▶ agents.commands
+anything else ──▶ agents.ask (natural-language Q&A)
 """
 
 from __future__ import annotations
 
-import logging
 import re
-from typing import Any
 
 from runway import alerts, employees, messaging
 from runway import entities as E
 from runway.agents import ask, commands
-from runway.store import Record, get_store
+from runway.negotiation import engine
+from runway.persona import HELP_MENU
+from runway.store import get_store
 
-log = logging.getLogger("runway.conversation")
+YES = {
+    "y",
+    "yes",
+    "yep",
+    "yeah",
+    "yup",
+    "ok",
+    "okay",
+    "sure",
+    "approve",
+    "approved",
+    "confirm",
+    "go",
+    "do it",
+    "send it",
+    "go ahead",
+    "sounds good",
+    "proceed",
+    "deploy",
+    "👍",
+}
+NO = {
+    "n",
+    "no",
+    "nope",
+    "nah",
+    "skip",
+    "pass",
+    "reject",
+    "don't",
+    "dont",
+    "hold off",
+    "not now",
+    "cancel that",
+    "actually no",
+    "👎",
+}
+MENU = {"hi", "hello", "hey", "help", "menu", "start", "runway", "?", "commands"}
 
-YES = {"y", "yes", "yep", "yeah", "yup", "ya", "ok", "okay", "sure", "approve", "approved", "do it", "go", "👍"}
-NO = {"n", "no", "nope", "nah", "decline", "declined", "reject", "skip", "don't", "dont", "👎"}
-_DECISION = re.compile(r"^(?P<word>[a-z'👍👎 ]+?)(?:\s*(?:to\s*)?#?\s*(?P<n>\d{1,2}))?$")
 
-
-def parse_decision(text: str) -> tuple[bool, int | None] | None:
-    """'y' -> (True, None); 'N 2' / 'yes to #2' -> (False/True, 2); anything else -> None."""
-    t = re.sub(r"[.!]+$", "", text.strip().lower().replace("’", "'")).strip()
-    m = _DECISION.match(t)
-    if not m:
-        return None
-    word = m.group("word").strip()
-    n = int(m.group("n")) if m.group("n") else None
-    if word in YES:
-        return True, n
-    if word in NO:
-        return False, n
+def yes_or_no(text: str) -> bool | None:
+    """Whole-message match only, so 'no, skip it today' is a no and 'yesterday's bill?' is a question."""
+    t = re.sub(r"[.!,]+$", "", text.strip().lower())
+    t = re.sub(r"\s+", " ", t)
+    first = re.split(r"[ ,]", t)[0]
+    if t in YES or (first in YES and len(t.split()) <= 3):
+        return True
+    if t in NO or (first in NO and len(t.split()) <= 4):
+        return False
     return None
 
 
-async def apply_decision(alert: Record, accept: bool) -> str | None:
-    """Act on the founder's Y/N for one alert. Returns the reply text (None = the action already texted)."""
-    from runway.negotiation import engine
-
-    store = get_store()
-    alerts.resolve(alert, "Y" if accept else "N")
-    meta = alert.get("metadata") or {}
+async def _execute(alert: dict) -> str:
+    """Carry out an approved alert. Returns the confirmation text."""
     kind = alert.get("alert_type")
+    meta = alert.get("metadata") or {}
+    vendor = meta.get("vendor") or "the vendor"
 
-    if kind == "negotiation_decision" and meta.get("negotiation_id"):
-        await engine.founder_decision(meta["negotiation_id"], accept)
-        return None  # the engine texts the outcome
-    if not accept:
-        return "Got it, I'll leave it." if kind != "expense_flagged" else "OK, marked as not approved."
-
-    if kind == "negotiate_offer" and meta.get("vendor"):
-        neg, created = engine.start(meta["vendor"], float(meta.get("price") or 0), alert_id=alert["id"])
+    if kind == "negotiate_offer":
+        if not meta.get("price"):
+            return f"I need {vendor}'s current price before I can negotiate."
+        neg, created = engine.start(
+            vendor, float(meta["price"]), target_pct=meta.get("target_pct"), alert_id=alert["id"]
+        )
         if not created:
-            return f"Already negotiating with {neg['vendor']} (round {neg.get('round', 0)})."
-        await engine.tick(neg["id"])  # opening email goes out; the engine texts "Sent ... our ask"
-        return None
-    if kind in ("expense_flagged", "categorize", "policy_violation"):
-        return "Approved. ✓"
-    if float(alert.get("savings_monthly") or 0) > 0:
-        store.put(
+            return f"Already negotiating with {vendor} (round {neg['round']})."
+        await engine.tick(neg["id"])  # sends round 1 right away; the worker takes it from here
+        return ""
+    if kind == "negotiation_decision" and meta.get("negotiation_id"):
+        await engine.founder_decision(meta["negotiation_id"], accept=True)
+        return ""
+    if kind == "cancel_requested":
+        get_store().put(
             E.SAVINGS,
             {
-                "title": f"{meta.get('vendor') or alert.get('pillar', '').replace('_', ' ')}: {kind}",
-                "amount_monthly": float(alert["savings_monthly"]),
-                "status": "approved",
+                "title": f"Cancel {vendor}",
+                "amount_monthly": meta.get("price") or 0,
+                "status": "pending",
                 "source_type": "alert",
                 "source_id": alert["id"],
             },
         )
-        return f"Approved. That's ${float(alert['savings_monthly']):,.0f}/mo; I'll track it under savings."
-    return "Approved. ✓"
+        return f"✅ Cancellation request sent to {vendor}. I'll confirm when they process it."
+    if kind == "downgrade_requested":
+        return f"✅ Downgrade request sent to {vendor}."
+    if kind == "expense_flagged":
+        return f"✅ Approved {meta.get('employee', 'the')} expense."
+    if kind == "ai_routing" or kind == "spend_spike":
+        return "✅ Routing change queued. Here's what changes: cheap, high-volume calls move to the smaller model."
+    return "✅ Done."
 
 
-async def _founder_reply(text: str, chat_id: str) -> str | None:
-    if (d := parse_decision(text)) is not None:
-        accept, n = d
-        alert = commands.find_pending_by_index(n) if n else alerts.latest_pending()
-        if alert is None:
-            if n:
-                return f"I don't have a #{n}. Say 'show pending' to see the list."
-            return "Nothing is waiting on you right now. Say 'show pending' to check held items."
-        return await apply_decision(alert, accept)
-
-    if (cmd := await commands.parse(text)) is not None:
-        return await commands.execute(cmd)
-
-    return await ask.answer(text, chat_id)
+async def _decline(alert: dict) -> str:
+    meta = alert.get("metadata") or {}
+    if alert.get("alert_type") == "negotiation_decision" and meta.get("negotiation_id"):
+        await engine.founder_decision(meta["negotiation_id"], accept=False)
+        return ""
+    return "Skipped. Say the word if you change your mind."
 
 
-async def handle_inbound(text: str, sender: str = "") -> dict[str, Any]:
-    """Handle one inbound text. Sends the reply over the configured notifier and returns it."""
+def undo_last_action() -> str:
+    """Mark the most recent autonomous action as undone. (Reversing it at the vendor is still manual.)"""
+    from datetime import UTC, datetime
+
+    from runway.store import find_one
+
+    act = find_one(
+        get_store(),
+        E.POLICY_ACTION,
+        lambda a: a.get("undo_available") and not a.get("undone_at"),
+        order_by="executed_at",
+        desc=True,
+    )
+    if not act:
+        return "There's no automatic action to undo."
+    get_store().update(
+        E.POLICY_ACTION, act["id"], {"undone_at": datetime.now(UTC).isoformat(), "undo_available": False}
+    )
+    return f"Undone: {act['action_type'].replace('_', ' ')} for {act['entity_name']}. I've logged it for follow-up."
+
+
+async def handle_yes_no(yes: bool) -> str:
+    alert = alerts.latest_pending()
+    if not alert:
+        return "Nothing is waiting on you right now."
+    alerts.resolve(alert, "Y" if yes else "N")
+    return await (_execute(alert) if yes else _decline(alert))
+
+
+async def handle_inbound(sender: str, text: str) -> dict:
     text = (text or "").strip()
     if not text:
-        return {"handled_as": "empty", "reply": None}
+        return {"status": "ignored"}
+    messaging.save_message(sender, "user", text)
 
-    # When no founder phone is configured, everyone is the founder (local dev / single-user demo).
-    is_employee = bool(sender) and bool(messaging.founder_phone()) and not messaging.is_founder(sender)
-    if is_employee:
-        messaging.save_message(sender, "user", text)
-        result = await employees.handle_reply(sender, text)
-        return {"handled_as": "employee", **result, "reply": None}
+    if sender and not messaging.is_founder(sender) and messaging.founder_phone():
+        return await employees.handle_reply(sender, text)
 
-    chat_id = messaging.founder_phone() or sender or "founder"
-    messaging.save_message(chat_id, "user", text)
-    try:
-        reply = await _founder_reply(text, chat_id)
-    except Exception:
-        log.exception("failed to handle %r", text)
-        reply = "Sorry, something went wrong on my end. Try again in a minute?"
+    if text.lower().strip("!. ") in MENU:
+        await messaging.send_to_founder(HELP_MENU)
+        return {"status": "menu"}
+
+    yn = yes_or_no(text)
+    if yn is not None:
+        reply = await handle_yes_no(yn)
+        kind = "yes_no"
+    elif text.upper() == "UNDO":
+        reply = undo_last_action()
+        kind = "undo"
+    elif commands.looks_like_command(text):
+        reply = await commands.run(text)
+        kind = "command"
+    else:
+        reply = await ask.answer(text, chat_id=sender)
+        kind = "question"
+
     if reply:
-        await messaging.send(chat_id if chat_id != "founder" else messaging.founder_phone(), reply)
-    return {"handled_as": "founder", "reply": reply}
+        await messaging.send_to_founder(reply)
+    return {"status": kind, "reply": reply}
