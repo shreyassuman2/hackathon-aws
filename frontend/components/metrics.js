@@ -1,30 +1,31 @@
 // ============================================================
-// METRIC CARDS COMPONENT
+// METRIC CARDS — a label, one big mono number, one quiet line.
+// A card that leads somewhere is a link and lifts on hover; the rest stay still.
 // ============================================================
 
+import { ICON_GO } from '../lib/ui.js';
+
 /**
- * Render a grid of metric cards
- * @param {Array} metrics - Array of { label, value, sub, color, change, changeDir }
+ * @param {Array} metrics - { id, label, value, sub, dot?, href? }
+ *   dot: a CSS colour for the small identity mark (a series colour), optional
+ *   href: '#ai-spend' etc. — makes the card a link
  */
 export function renderMetrics(metrics) {
   return `
     <div class="metrics-grid">
-      ${metrics.map(m => `
-        <div class="metric-card bg-${m.color || 'white'}">
-          <div class="metric-card-top">
-            <div class="metric-label">${m.label}</div>
-            <div class="metric-accent-dot bg-${m.dotColor}"></div>
-          </div>
-          <div class="metric-value-row">
-            <div class="metric-value color-${m.valueColor || 'black'}" ${m.id ? `data-metric-value="${m.id}"` : ''}>${m.value}</div>
-          </div>
-          <div class="metric-sub" ${m.id ? `data-metric-sub="${m.id}"` : ''}>
-            ${m.sub}
-          </div>
-          ${m.change ? `<div class="metric-change-block ${m.changeDir === 'up' ? 'up' : 'down'}">${m.changeDir === 'down' ? '↓' : '↑'} ${m.change}</div>` : ''}
-          <div class="metric-corner-tag">${m.tag}</div>
-        </div>
-      `).join('')}
+      ${metrics.map((m) => {
+        const tag = m.href ? 'a' : 'div';
+        const attrs = m.href ? `href="${m.href}"` : '';
+        return `
+          <${tag} class="metric-card" ${attrs}>
+            <div class="metric-label">
+              ${m.dot ? `<span class="metric-dot" style="background:${m.dot}"></span>` : ''}${m.label}
+            </div>
+            ${m.href ? ICON_GO : ''}
+            <div class="metric-value" ${m.id ? `data-metric-value="${m.id}"` : ''}>${m.value}</div>
+            <div class="metric-sub" ${m.id ? `data-metric-sub="${m.id}"` : ''}>${m.sub}</div>
+          </${tag}>`;
+      }).join('')}
     </div>
   `;
 }
