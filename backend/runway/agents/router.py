@@ -7,6 +7,7 @@ The known list makes the demo instant and free; Claude handles the long tail ("J
 
 from __future__ import annotations
 
+import re
 from typing import Literal
 
 from pydantic import BaseModel
@@ -69,13 +70,18 @@ class _Route(BaseModel):
     reason: str
 
 
+def _has_word(text: str, word: str) -> bool:
+    """Whole-word match, so "Bloomingdale's" is not Loom and "Get Together Bar" is not Together AI."""
+    return re.search(rf"(?<![a-z]){re.escape(word)}(?![a-z])", text) is not None
+
+
 def known_pillar(txn: TransactionIn) -> Pillar | None:
     if txn.category and txn.category.lower() in CATEGORY_TO_PILLAR:
         return CATEGORY_TO_PILLAR[txn.category.lower()]
     m = txn.merchant.lower()
-    if any(v in m for v in AI_VENDORS):
+    if any(_has_word(m, v) for v in AI_VENDORS):
         return "ai_spend"
-    if any(v in m for v in SAAS_VENDORS):
+    if any(_has_word(m, v) for v in SAAS_VENDORS):
         return "saas_sprawl"
     return None
 

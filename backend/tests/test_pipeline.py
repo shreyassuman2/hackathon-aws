@@ -48,3 +48,48 @@ def test_decision_needed_waits_for_business_hours(monkeypatch):
     assert tier == "decision_needed"
     assert not restraint.should_send_now(tier, datetime(2026, 1, 1, 3, tzinfo=UTC))
     assert restraint.should_send_now(tier, datetime(2026, 1, 1, 10, tzinfo=UTC))
+
+
+# ── matching and robustness fixes ─────────────────────────────────────────────
+
+
+def test_vendor_matching_is_whole_word():
+    from runway.agents.router import known_pillar
+    from runway.models import TransactionIn
+
+    def pillar(merchant):
+        return known_pillar(TransactionIn(merchant=merchant, amount=10))
+
+    assert pillar("Bloomingdale's") is None
+    assert pillar("Cursor") == "saas_sprawl"
+    assert pillar("Anthropic, PBC") == "ai_spend"
+
+
+def test_red_flags_are_whole_word():
+    from runway.agents.compliance import check
+    from runway.models import TransactionIn
+
+    def flags(merchant):
+        return check(TransactionIn(merchant=merchant, amount=10, memo="x"), None)
+
+    assert flags("Alphabet Inc") == []
+    assert flags("Atmosphere Cafe") == []
+    assert flags("Lucky Casino") == ["gambling"]
+    assert flags("ATM Withdrawal") == ["cash_advance"]
+
+
+def test_cap_counts_month_to_date_spend():
+    from runway.agents.compliance import check
+    from runway.models import TransactionIn
+
+    txn = TransactionIn(merchant="Delta", amount=200, memo="flight")
+    emp = {"monthly_expense_cap": 500}
+    assert check(txn, emp, month_spend=0) == []
+    assert check(txn, emp, month_spend=400) == ["over_cap:500"]
+
+
+def test_employee_escalation_handles_curly_apostrophe():
+    from runway.employees import ESCALATE_WORDS
+
+    text = "I don’t know what that is".lower().replace("’", "'")
+    assert any(w in text for w in ESCALATE_WORDS)
