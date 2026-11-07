@@ -88,3 +88,39 @@ def test_dashboard_routes_for_frontend(client):
     assert client.get("/ai-usage").json()[0]["week_start"]
     emps = client.get("/employees").json()
     assert emps and set(emps[0]) == {"id", "name", "role", "email"}  # no phone numbers
+
+
+def test_dashboard_metric_definitions(client, seeded):
+    """Each dashboard number counts what its card says it counts."""
+    from datetime import UTC, datetime, timedelta
+
+    m = client.get("/dashboard/metrics").json()
+    pending = client.get("/alerts", params={"pending": True, "limit": 1000}).json()
+
+    # Compliance flags are compliance alerts only, not every pending alert.
+    assert m["complianceFlags"] == sum(a["pillar"] == "compliance" for a in pending)
+    assert m["complianceFlags"] < len(pending)
+    assert m["pendingReview"] == sum(
+        t.get("pillar") == "compliance" and t.get("status") == "pending" for t in seeded.list(E.TRANSACTION)
+    )
+
+    # Spend change compares the last 30 days with the 30 before.
+    now = datetime.now(UTC)
+
+    def spend(lo, hi):
+        return sum(
+            t["amount"] for t in seeded.list(E.TRANSACTION) if lo.isoformat() <= t["created_at"] < hi.isoformat()
+        )
+
+    cur, prev = spend(now - timedelta(days=30), now), spend(now - timedelta(days=60), now - timedelta(days=30))
+    assert m["spendChangePct"] == (round((cur - prev) / prev * 100, 1) if prev else None)
+
+    # A savings record created now shows up in this week's new savings.
+    before = m["newSavings7d"]
+    seeded.put(E.SAVINGS, {"title": "test", "amount_monthly": 250, "status": "approved"})
+    assert client.get("/dashboard/metrics").json()["newSavings7d"] == before + 250
+
+
+def test_spend_change_is_none_without_history(env):
+    m = TestClient(app).get("/dashboard/metrics").json()  # empty store: no demo data
+    assert m["spendChangePct"] is None and m["complianceFlags"] == 0 and m["pendingReview"] == 0
