@@ -154,3 +154,10 @@ async def test_ask_answer_never_ends_with_an_offer(monkeypatch):
 
     monkeypatch.setattr(llm, "tool_chat", fake)
     assert await ask.answer("what did we spend on AI") == "AI spend is $9,960 in the last 30 days."
+
+
+async def test_vendor_opportunities_warns_against_summing():
+    from runway.agents import ask
+
+    out = await ask.vendor_opportunities("Figma")
+    assert "do not add them up" in out["note"]
