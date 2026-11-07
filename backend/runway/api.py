@@ -1,69 +1,173 @@
-"""HTTP API (FastAPI). Runs locally with `make api` and in AWS Lambda via `handlers.api_handler`.
+"""HTTP API (FastAPI). Runs locally with uvicorn and on AWS Lambda via Mangum (see handlers.py).
 
-Every route except /health requires `X-Runway-Token` when RUNWAY_API_TOKEN is set. The API can
-approve spend, so always set it when the API is reachable from outside your laptop.
+uv run uvicorn runway.api:app --reload --port 8000
+open http://localhost:8000/docs
 """
 
 from __future__ import annotations
 
 import hmac
-from typing import Literal
+import logging
+from collections import defaultdict
+from datetime import UTC, datetime, timedelta
+from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from runway import alerts, conversation, digest, messaging, pipeline
+from runway import alerts, conversation, digest, pipeline
 from runway import entities as E
-from runway.agents import ask
+from runway.agents import ask, commands
 from runway.config import get_settings
 from runway.models import TransactionIn
 from runway.negotiation import engine
-from runway.persona import BOOT_GREETING
 from runway.store import Record, find, get_store
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
+
+settings = get_settings()
 
 
 def require_token(x_runway_token: str | None = Header(default=None)) -> None:
     expected = get_settings().api_token
     if expected and not hmac.compare_digest(x_runway_token or "", expected):
-        raise HTTPException(status_code=401, detail="missing or wrong X-Runway-Token")
+        raise HTTPException(status_code=401, detail="missing or bad X-Runway-Token")
 
 
-app = FastAPI(title="Runway", version="0.1.0", description="An AI finance team for startups, in iMessage.")
+app = FastAPI(title="Runway", version="0.1.0", description="AI finance team for startups, on AWS.")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in get_settings().cors_origins.split(",") if o.strip()],
+    allow_origins=[o.strip() for o in settings.cors_origins.split(",") if o.strip()],
     allow_methods=["*"],
     allow_headers=["*"],
 )
-api = APIRouter(dependencies=[Depends(require_token)])
+api = Depends(require_token)
 
 
-def _get(entity: str, id: str) -> Record:
-    rec = get_store().get(entity, id)
-    if rec is None:
-        raise HTTPException(status_code=404, detail=f"{entity} {id} not found")
-    return rec
+# ── request bodies ────────────────────────────────────────────────────────────
+
+
+class InboundMessage(BaseModel):
+    """What the iMessage bridge posts. Field names match bridge/server.js."""
+
+    sender: str = ""
+    text: str = ""
+
+
+class Question(BaseModel):
+    question: str
+
+
+class CommandIn(BaseModel):
+    message: str
+
+
+class NegotiationIn(BaseModel):
+    vendor: str
+    price: float
+    target_pct: float | None = None
+    vendor_email: str | None = None
+    demo: bool | None = None
+
+
+# ── helpers ───────────────────────────────────────────────────────────────────
+
+
+def _employees() -> dict[str, Record]:
+    return {e["id"]: e for e in get_store().list(E.EMPLOYEE)}
+
+
+def _with_employee(rows: list[Record]) -> list[Record]:
+    """Attach {name, role, email} like the old Supabase join did, so the frontend keeps working."""
+    emps = _employees()
+    out = []
+    for r in rows:
+        e = emps.get(r.get("employee_id") or "")
+        out.append({**r, "employees": {k: e.get(k) for k in ("name", "role", "email")} if e else None})
+    return out
+
+
+def _since(days: int) -> str:
+    return (datetime.now(UTC) - timedelta(days=days)).isoformat()
+
+
+# ── core ──────────────────────────────────────────────────────────────────────
 
 
 @app.get("/health")
-def health() -> dict:
+def health() -> dict[str, Any]:
     s = get_settings()
     return {"ok": True, "store": s.store, "llm": s.llm, "notifier": s.notifier, "mail": s.mail}
 
 
-# ── transactions & alerts ─────────────────────────────────────────────────────
+@app.post("/transactions", dependencies=[api])
+async def ingest_transaction(txn: TransactionIn) -> dict[str, Any]:
+    """Bank feed / purchase emulator webhook. Runs the whole pipeline and returns the alert."""
+    alert = await pipeline.process(txn)
+    return {"status": "processed", "alert": alert}
 
 
-@api.post("/transactions")
-async def create_transaction(txn: TransactionIn) -> dict:
-    """A card swipe / bank-feed charge. Runs the whole pipeline and returns the alert it raised."""
-    return {"alert": await pipeline.process(txn)}
+@app.post("/imessage/inbound", dependencies=[api])
+async def imessage_inbound(msg: InboundMessage) -> dict[str, Any]:
+    return await conversation.handle_inbound(msg.sender, msg.text)
 
 
-@api.get("/transactions")
-def list_transactions(limit: int = 50, pillar: str | None = None) -> list[Record]:
-    return find(
+@app.post("/ask", dependencies=[api])
+async def ask_endpoint(q: Question) -> dict[str, str]:
+    return {"question": q.question, "answer": await ask.answer(q.question)}
+
+
+@app.post("/command", dependencies=[api])
+async def command_endpoint(c: CommandIn) -> dict[str, str]:
+    return {"reply": await commands.run(c.message)}
+
+
+@app.post("/digest/{kind}", dependencies=[api])
+async def send_digest(kind: Literal["morning", "weekly"]) -> dict[str, bool]:
+    return {"sent": await digest.send(kind)}
+
+
+# ── negotiations ──────────────────────────────────────────────────────────────
+
+
+@app.get("/negotiations", dependencies=[api])
+def negotiations() -> list[Record]:
+    return engine.list_negotiations()
+
+
+@app.post("/negotiations", dependencies=[api])
+async def start_negotiation(body: NegotiationIn) -> dict[str, Any]:
+    rec, created = engine.start(
+        body.vendor, body.price, target_pct=body.target_pct, vendor_email=body.vendor_email, demo=body.demo
+    )
+    if created:
+        rec = await engine.tick(rec["id"])
+    return {"created": created, "negotiation": rec}
+
+
+@app.post("/negotiations/{neg_id}/tick", dependencies=[api])
+async def tick_negotiation(neg_id: str) -> Record:
+    rec = await engine.tick(neg_id)
+    if rec is None:
+        raise HTTPException(404, "negotiation not found")
+    return rec
+
+
+@app.post("/negotiations/{neg_id}/cancel", dependencies=[api])
+def cancel_negotiation(neg_id: str) -> Record:
+    rec = engine.cancel(neg_id)
+    if rec is None:
+        raise HTTPException(404, "negotiation not found")
+    return rec
+
+
+# ── dashboard reads ───────────────────────────────────────────────────────────
+
+
+@app.get("/transactions", dependencies=[api])
+def list_transactions(limit: int = 30, pillar: str | None = None) -> list[Record]:
+    rows = find(
         get_store(),
         E.TRANSACTION,
         (lambda t: t.get("pillar") == pillar) if pillar else None,
@@ -71,171 +175,80 @@ def list_transactions(limit: int = 50, pillar: str | None = None) -> list[Record
         desc=True,
         limit=limit,
     )
+    return _with_employee(rows)
 
 
-@api.get("/alerts")
-def list_alerts(pending: bool = False, limit: int = 50) -> list[Record]:
-    if pending:
+@app.get("/alerts", dependencies=[api])
+def list_alerts(limit: int = 30, pending_only: bool = False) -> list[Record]:
+    if pending_only:
         return alerts.pending(limit)
     return find(get_store(), E.ALERT, order_by="created_at", desc=True, limit=limit)
 
 
-class Decision(BaseModel):
-    accept: bool
+@app.get("/ai-usage", dependencies=[api])
+def ai_usage() -> list[Record]:
+    return find(get_store(), E.AI_USAGE, order_by="week_start", desc=True)
 
 
-@api.post("/alerts/{alert_id}/decision")
-async def decide_alert(alert_id: str, body: Decision) -> dict:
-    """The dashboard's Approve / Decline buttons. Same effect as texting Y / N."""
-    alert = _get(E.ALERT, alert_id)
-    if alert.get("resolved"):
-        raise HTTPException(status_code=409, detail="alert already resolved")
-    reply = await conversation.apply_decision(alert, body.accept)
-    return {"alert": _get(E.ALERT, alert_id), "reply": reply}
-
-
-# ── conversation ──────────────────────────────────────────────────────────────
-
-
-class Inbound(BaseModel):
-    text: str
-    sender: str = ""  # phone or email from the bridge; empty = the founder
-
-
-@api.post("/imessage/inbound")
-async def imessage_inbound(msg: Inbound) -> dict:
-    """The bridge posts every inbound iMessage here. The reply is sent via the notifier and returned."""
-    return await conversation.handle_inbound(msg.text, msg.sender)
-
-
-class Question(BaseModel):
-    question: str = Field(min_length=1)
-
-
-@api.post("/ask")
-async def ask_anything(q: Question) -> dict:
-    return {"answer": await ask.answer(q.question)}
-
-
-@api.get("/messages")
-def list_messages(chat_id: str = "", limit: int = 50) -> list[dict]:
-    return messaging.chat_history(chat_id or messaging.founder_phone(), limit=limit)
-
-
-@api.post("/hello")
-async def hello() -> dict:
-    """Send the boot greeting (handy for checking the iMessage bridge end to end)."""
-    return {"sent": await messaging.send_to_founder(BOOT_GREETING)}
-
-
-# ── negotiations ─────────────────────────────────────────────────────────────
-
-
-class NegotiationIn(BaseModel):
-    vendor: str
-    price: float = Field(gt=0, description="Current monthly price")
-    target_pct: float | None = Field(default=None, gt=0, lt=100)
-    vendor_email: str | None = None
-    demo: bool | None = None  # None = follow RUNWAY_MAIL
-
-
-@api.get("/negotiations")
-def list_negotiations(limit: int = 50) -> list[Record]:
-    return engine.list_negotiations(limit)
-
-
-@api.post("/negotiations")
-async def start_negotiation(body: NegotiationIn) -> dict:
-    neg, created = engine.start(
-        body.vendor, body.price, target_pct=body.target_pct, vendor_email=body.vendor_email, demo=body.demo
-    )
-    if created:
-        neg = await engine.tick(neg["id"]) or neg
-    return {"negotiation": neg, "created": created}
-
-
-@api.get("/negotiations/{neg_id}")
-def get_negotiation(neg_id: str) -> Record:
-    return _get(E.NEGOTIATION, neg_id)
-
-
-@api.post("/negotiations/{neg_id}/tick")
-async def tick_negotiation(neg_id: str) -> Record:
-    _get(E.NEGOTIATION, neg_id)
-    return await engine.tick(neg_id) or _get(E.NEGOTIATION, neg_id)
-
-
-@api.post("/negotiations/{neg_id}/cancel")
-def cancel_negotiation(neg_id: str) -> Record:
-    _get(E.NEGOTIATION, neg_id)
-    return engine.cancel(neg_id) or _get(E.NEGOTIATION, neg_id)
-
-
-# ── dashboard ─────────────────────────────────────────────────────────────────
-
-
-@api.get("/dashboard/metrics")
-async def dashboard_metrics(days: int = 30) -> dict:
-    store = get_store()
-    spend = await ask.spend_by_pillar(days)
-    savings = await ask.savings_summary()
-    negs = store.list(E.NEGOTIATION)
-    return {
-        "days": days,
-        "spend_total": round(sum(spend["by_pillar"].values()), 2),
-        "spend_by_pillar": spend["by_pillar"],
-        "savings_monthly_by_status": savings["monthly_by_status"],
-        "pending_alerts": len(alerts.pending(limit=1000)),
-        "negotiations_active": sum(1 for n in negs if n.get("status") in engine.ACTIVE),
-        "negotiations_won": sum(1 for n in negs if n.get("status") == "closed_won"),
-        "autonomous_actions_7d": len(await ask.autonomous_actions(7)),
-    }
-
-
-@api.get("/savings")
-def list_savings() -> list[Record]:
-    return find(get_store(), E.SAVINGS, order_by="created_at", desc=True)
-
-
-@api.get("/renewals")
-def list_renewals() -> list[Record]:
+@app.get("/subscriptions", dependencies=[api])
+def subscriptions() -> list[Record]:
     return find(get_store(), E.RENEWAL, order_by="renewal_date")
 
 
-@api.get("/policies")
+@app.get("/seats", dependencies=[api])
+def seats() -> list[Record]:
+    return _with_employee(find(get_store(), E.SEAT, order_by="last_active_date"))
+
+
+@app.get("/policy-actions", dependencies=[api])
+def policy_actions(limit: int = 10) -> list[Record]:
+    return find(get_store(), E.POLICY_ACTION, order_by="executed_at", desc=True, limit=limit)
+
+
+@app.get("/policies", dependencies=[api])
 def list_policies() -> list[Record]:
     return get_store().list(E.POLICY)
 
 
-class PolicyPatch(BaseModel):
-    enabled: bool | None = None
-    threshold_amount: float | None = None
-    threshold_days: int | None = None
-    threshold_discount_pct: float | None = None
+@app.get("/employees", dependencies=[api])
+def employees() -> list[Record]:
+    return [{k: e.get(k) for k in ("id", "name", "role", "email")} for e in get_store().list(E.EMPLOYEE)]
 
 
-@api.patch("/policies/{policy_id}")
-def update_policy(policy_id: str, patch: PolicyPatch) -> Record:
-    _get(E.POLICY, policy_id)
-    return get_store().update(E.POLICY, policy_id, patch.model_dump(exclude_none=True))
+@app.get("/dashboard/metrics", dependencies=[api])
+def metrics() -> dict[str, Any]:
+    store = get_store()
+    since = _since(30)
+    txns = find(store, E.TRANSACTION, lambda t: (t.get("created_at") or "") >= since)
+    return {
+        "totalMonthlySpend": round(sum(float(t.get("amount") or 0) for t in txns)),
+        "identifiedSavings": round(sum(float(t.get("savings_identified") or 0) for t in store.list(E.TRANSACTION))),
+        "ghostSeats": len(find(store, E.SEAT, lambda s: s.get("is_dormant"))),
+        "complianceFlags": len(alerts.pending(limit=1000)),
+        "activeSubscriptions": len(store.list(E.RENEWAL)),
+        "activeNegotiations": len(find(store, E.NEGOTIATION, lambda n: n.get("status") in engine.ACTIVE)),
+    }
 
 
-@api.get("/policy-actions")
-def list_policy_actions(limit: int = 50) -> list[Record]:
-    return find(get_store(), E.POLICY_ACTION, order_by="executed_at", desc=True, limit=limit)
-
-
-class DigestIn(BaseModel):
-    kind: Literal["morning", "weekly"] = "weekly"
-    send: bool = True
-
-
-@api.post("/digest")
-async def run_digest(body: DigestIn) -> dict:
-    if body.send:
-        return await digest.send(body.kind)
-    text, held = digest.build(body.kind)
-    return {"sent": False, "kind": body.kind, "items": len(held), "text": text}
-
-
-app.include_router(api)
+@app.get("/dashboard/spend-trend", dependencies=[api])
+def spend_trend(days: int = 14, bucket_days: int = 2) -> dict[str, Any]:
+    now = datetime.now(UTC)
+    start = now - timedelta(days=days)
+    txns = find(get_store(), E.TRANSACTION, lambda t: (t.get("created_at") or "") >= start.isoformat())
+    n = max(1, days // bucket_days)
+    sums: dict[str, list[float]] = defaultdict(lambda: [0.0] * n)
+    for t in txns:
+        idx = min(n - 1, (datetime.fromisoformat(t["created_at"]) - start).days // bucket_days)
+        sums[t.get("pillar") or "unknown"][idx] += float(t.get("amount") or 0)
+    ai, saas, exp = (list(map(round, sums[p])) for p in ("ai_spend", "saas_sprawl", "compliance"))
+    days_out = [start + timedelta(days=i * bucket_days) for i in range(n)]
+    labels = [f"{d:%b} {d.day}" for d in days_out]  # "%-d" isn't supported on Windows
+    return {
+        "labels": labels,
+        "datasets": {
+            "total": [a + s + e for a, s, e in zip(ai, saas, exp, strict=True)],
+            "ai": ai,
+            "saas": saas,
+            "expenses": exp,
+        },
+    }

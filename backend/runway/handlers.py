@@ -1,33 +1,30 @@
-"""AWS Lambda entry points (see infra/template.yaml).
+"""AWS Lambda entry points (wired up in infra/template.yaml).
 
-ApiFunction          runway.handlers.api_handler          FastAPI behind an HTTP API, via Mangum
-NegotiationFunction  runway.handlers.negotiation_handler  every 5 min: tick all deals, flush held alerts
-DigestFunction       runway.handlers.digest_handler       Mon 8am / Fri 4pm PT: {"kind": "morning"|"weekly"}
+api_handler          HTTP API → FastAPI (via Mangum)
+negotiation_handler  EventBridge schedule (every 5 min): advance negotiations + flush held alerts
+digest_handler       EventBridge schedule (Mon/Fri mornings): send the digest
 """
 
 from __future__ import annotations
 
 import asyncio
-import logging
 from typing import Any
 
 from mangum import Mangum
 
-from runway import digest
 from runway.api import app
-from runway.negotiation import worker
-
-logging.getLogger().setLevel(logging.INFO)
 
 api_handler = Mangum(app, lifespan="off")
 
 
-def negotiation_handler(event: dict[str, Any] | None = None, context: Any = None) -> dict[str, Any]:
-    return {"advanced": asyncio.run(worker.run_once())}
+def negotiation_handler(event: dict[str, Any], context: Any) -> dict[str, int]:
+    from runway.negotiation.worker import run_once
+
+    return {"advanced": asyncio.run(run_once())}
 
 
-def digest_handler(event: dict[str, Any] | None = None, context: Any = None) -> dict[str, Any]:
+def digest_handler(event: dict[str, Any], context: Any) -> dict[str, bool]:
+    from runway import digest
+
     kind = (event or {}).get("kind", "weekly")
-    if kind not in ("morning", "weekly"):
-        kind = "weekly"
-    return asyncio.run(digest.send(kind))
+    return {"sent": asyncio.run(digest.send(kind))}
