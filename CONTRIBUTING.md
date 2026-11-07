@@ -10,7 +10,7 @@ Fill in names/handles below. (Frontend comes later; see the end of this section.
 | 1 | **Core & AWS** | _name_ | `runway/config.py`, `store.py`, `entities.py`, `models.py`, `llm.py`, `messaging.py`, `alerts.py`, `restraint.py`, `policies.py`, `seed.py`, `seed/`, `infra/`, repo setup | First `sam deploy`; seed DynamoDB; get a real Bedrock call working; add a GSI if a list gets slow |
 | 2 | **Agents** | _name_ | `runway/persona.py`, `agents/` (except `commands.py`), `pipeline.py`, `employees.py` | Tune prompts with Bedrock on; more Ask-Anything tools; long-term memory (Bedrock embeddings) |
 | 3 | **Negotiation** | _name_ | `runway/negotiation/` | Live email: SES inbound (receipt rule → S3 → Lambda) to replace IMAP; smarter concession strategy |
-| 4 | **API & conversation** | _name_ | `runway/api.py`, `conversation.py`, `agents/commands.py`, `digest.py`, `handlers.py`, `bridge/` | Get the iMessage bridge running on the demo Mac; multi-alert replies ("Y to #2"); real auth |
+| 4 | **API & conversation** | Rohan (@rohan2008) | `runway/api.py`, `conversation.py`, `agents/commands.py`, `digest.py`, `handlers.py`, `bridge/` | Get the iMessage bridge running on the demo Mac; multi-alert replies ("Y to #2"); real auth |
 
 **Frontend later:** `frontend/` and `tools/purchase-emulator/` aren't in the repo yet. Whoever picks
 them up adds them in their own PR and adds the frontend job back to `.github/workflows/ci.yml`.
