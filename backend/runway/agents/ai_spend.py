@@ -10,6 +10,7 @@ from collections import defaultdict
 
 from runway import entities as E
 from runway import llm
+from runway.agents.grounding import is_grounded
 from runway.models import Finding, TransactionIn
 from runway.persona import PERSONA
 from runway.policies import same_vendor
@@ -65,10 +66,14 @@ async def analyze(txn: TransactionIn) -> Finding:
     )
     ratio = week_over_week(rows)
     spike = ratio is not None and ratio >= SPIKE_RATIO
-    best = max((float(r.get("potential_savings") or 0) for r in rows), default=0.0)
+    # Only the latest week: older rows describe routing that may already be fixed.
+    latest = weekly_totals(rows)[0][0] if rows else None
+    best = max(
+        (float(r.get("potential_savings") or 0) for r in rows if str(r.get("week_start")) == latest),
+        default=0.0,
+    )
 
-    message = await llm.text(
-        f"""Write a founder alert about this AI bill.
+    prompt = f"""Write a founder alert about this AI bill.
 
 Charge: {txn.merchant}, ${txn.amount:,.2f}
 Week-over-week ratio (latest/previous): {f"{ratio:.2f}" if ratio else "unknown"}
@@ -77,10 +82,11 @@ potential_savings per month):
 {rows}
 
 Say whether this is a spike, which use_case and model drive the latest week, and the monthly
-saving from the recommended model if there is one. End by asking whether to deploy the routing
-change.""",
-        system=PERSONA,
-    ) or _template(txn.merchant, txn.amount, rows, ratio)
+saving from the recommended model if there is one. Don't ask a question; the approval prompt is
+added separately."""
+    message = await llm.text(prompt, system=PERSONA)
+    if not message or not is_grounded(message, prompt):
+        message = _template(txn.merchant, txn.amount, rows, ratio)
 
     requires_action = spike or best >= SAVINGS_ACTION_THRESHOLD
     return Finding(

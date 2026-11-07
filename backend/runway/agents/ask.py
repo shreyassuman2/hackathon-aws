@@ -12,6 +12,7 @@ from typing import Any
 
 from runway import entities as E
 from runway import llm, messaging
+from runway.agents import saas
 from runway.persona import PERSONA
 from runway.policies import same_vendor
 from runway.store import find, get_store
@@ -178,6 +179,25 @@ async def negotiations() -> list[dict[str, Any]]:
     ]
 
 
+async def vendor_opportunities(vendor: str) -> dict[str, Any]:
+    """Every savings signal for one SaaS vendor, biggest first."""
+    sig = saas.gather(vendor)
+    opps = saas.opportunities(vendor, sig)
+    return {
+        "vendor": vendor,
+        "renewal": sig.renewal and {k: sig.renewal.get(k) for k in ("renewal_date", "monthly_cost", "plan_tier")},
+        "opportunities": [{"kind": o.kind, "monthly": o.savings_monthly, "summary": o.summary} for o in opps],
+    }
+
+
+async def spend_by_pillar(days: int = 30) -> dict[str, Any]:
+    rows = find(get_store(), E.TRANSACTION, lambda t: (t.get("created_at") or "") >= _since(days))
+    by: dict[str, float] = defaultdict(float)
+    for t in rows:
+        by[t.get("pillar") or "unclassified"] += float(t.get("amount") or 0)
+    return {"days": days, "by_pillar": {k: round(v, 2) for k, v in sorted(by.items(), key=lambda kv: -kv[1])}}
+
+
 def _tool(fn, description: str, props: dict[str, Any], required: list[str] | None = None) -> llm.Tool:
     return llm.Tool(
         fn.__name__,
@@ -211,6 +231,13 @@ TOOLS = [
         {"name": {"type": "string"}, "days": _DAYS},
         ["name"],
     ),
+    _tool(
+        vendor_opportunities,
+        "Savings opportunities for one SaaS vendor: dormant seats, downgrades, overlaps, unused add-ons.",
+        {"vendor": {"type": "string"}},
+        ["vendor"],
+    ),
+    _tool(spend_by_pillar, "Total spend split by pillar (AI, SaaS, compliance) over a window.", {"days": _DAYS}),
     _tool(autonomous_actions, "Actions Runway took on its own under the founder's policies.", {"days": _DAYS}),
     _tool(savings_summary, "Savings identified and realized so far.", {}),
     _tool(negotiations, "Status of renewal negotiations Runway is running.", {}),
