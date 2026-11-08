@@ -65,7 +65,7 @@ export async function sendCommand(text) {
   return reply || 'Sent ✓';
 }
 
-/** Poll for new alerts (replaces Supabase Realtime). Returns an unsubscribe function. */
+/** Poll for new alerts. Returns an unsubscribe function. */
 export function subscribeToAlerts(callback, intervalMs = 5000) {
   let newest = null;
   const tick = async () => {
