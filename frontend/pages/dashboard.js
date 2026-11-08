@@ -132,7 +132,8 @@ export function initDashboardCharts() {
     set('aiShare', money(m.spend_by_pillar?.ai_spend ?? 0));
     set('activeSubscriptions', String(m.activeSubscriptions ?? '—'));
     sub('activeSubscriptions', `${m.ghostSeats ?? 0} seats nobody uses`);
-    set('complianceFlags', String(m.complianceFlags ?? m.pending_alerts ?? 0));
+    // Everything waiting on the founder (all pillars). Not complianceFlags: after #20 that counts expense alerts only.
+    set('complianceFlags', String(m.pending_alerts ?? m.complianceFlags ?? 0));
   });
 
   // ── Activity feed, then live: new alerts enter at the top ──
