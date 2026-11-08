@@ -13,7 +13,15 @@ const swipesList = document.getElementById('swipes-list');
 let recentSwipes = [];
 try { recentSwipes = JSON.parse(localStorage.getItem('recent_swipes') || '[]'); } catch { recentSwipes = []; }
 
+const clearBtn = document.getElementById('clear-swipes');
+clearBtn.addEventListener('click', () => {
+    recentSwipes = [];
+    try { localStorage.removeItem('recent_swipes'); } catch { /* private mode */ }
+    updateSwipesList();
+});
+
 function updateSwipesList() {
+    clearBtn.hidden = recentSwipes.length === 0;
     swipesList.replaceChildren(...recentSwipes.map(s => {
         const pill = document.createElement('div');
         pill.className = 'swipe-pill';

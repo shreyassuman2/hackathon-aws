@@ -70,7 +70,15 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .status-tray.error { border-left: 3px solid var(--bad); color: var(--bad); }
 @keyframes tray-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 .recent-swipes { padding-top: 16px; border-top: 1px solid var(--line); }
-.recent-swipes h2 { margin: 0 0 8px; font-size: 13px; font-weight: 500; color: var(--muted); }
+.recent-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.clear-btn {
+  height: 28px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+  background: none; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer;
+  transition: color 200ms var(--ease), border-color 200ms var(--ease), transform 200ms var(--ease);
+}
+.clear-btn:hover { color: var(--ink); border-color: var(--ink); transition-duration: 140ms; }
+.clear-btn:active { transform: scale(.97); transition-duration: 90ms; }
+.recent-swipes h2 { margin: 0; font-size: 13px; font-weight: 500; color: var(--muted); }
 #swipes-list { display: flex; flex-direction: column; }
 .swipe-pill { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
 .swipe-pill:last-child { border-bottom: 0; }
