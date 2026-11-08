@@ -17,7 +17,7 @@ import httpx
 
 from runway import entities as E
 from runway.config import get_settings
-from runway.store import find, get_store
+from runway.store import Record, find, get_store
 
 log = logging.getLogger("runway.messaging")
 
@@ -48,11 +48,29 @@ def _chat_key(chat_id: str) -> str:
     return normalize_phone(chat_id) or chat_id or "founder"
 
 
-def save_message(chat_id: str, role: str, content: str) -> None:
+def save_message(chat_id: str, role: str, content: str, *, asks_alert_id: str | None = None) -> None:
+    """`asks_alert_id`: this message asked the founder Y/N about that alert (see last_founder_message)."""
+    row = {"chat_id": _chat_key(chat_id), "role": role, "content": content}
+    if asks_alert_id:
+        row["asks_alert_id"] = asks_alert_id
     try:
-        get_store().put(E.MESSAGE, {"chat_id": _chat_key(chat_id), "role": role, "content": content})
+        get_store().put(E.MESSAGE, row)
     except Exception as exc:
         log.warning("could not save message: %s", exc)
+
+
+def last_founder_message() -> Record | None:
+    """The newest message Runway sent the founder. A bare Y/N answers it, and only it."""
+    cid = _chat_key(founder_phone())
+    rows = find(
+        get_store(),
+        E.MESSAGE,
+        lambda r: r.get("chat_id") == cid and r.get("role") == "assistant",
+        order_by="created_at",
+        desc=True,
+        limit=1,
+    )
+    return rows[0] if rows else None
 
 
 def chat_history(chat_id: str, limit: int = 10) -> list[dict[str, str]]:
@@ -85,14 +103,17 @@ async def _deliver(to: str, text: str) -> bool:
         return False
 
 
-async def send(to: str, text: str) -> bool:
+async def send(to: str, text: str, *, asks_alert_id: str | None = None) -> bool:
     to = normalize_phone(to)
-    save_message(to, "assistant", text)
+    save_message(to, "assistant", text, asks_alert_id=asks_alert_id)
     return await _deliver(to, text)
 
 
-async def send_to_founder(text: str, *, ask: str | None = None) -> bool:
-    """Text the founder. If `ask` is given, it's appended as a Y/N question."""
+async def send_to_founder(text: str, *, ask: str | None = None, alert_id: str | None = None) -> bool:
+    """Text the founder. If `ask` is given, it's appended as a Y/N question about `alert_id`.
+
+    Pass `alert_id` with every ask: a bare "y" only approves the alert the last message asked about.
+    """
     if ask:
         text = f"{text}\n\n{ask}\nReply Y or N."
-    return await send(founder_phone(), text)
+    return await send(founder_phone(), text, asks_alert_id=alert_id if ask else None)

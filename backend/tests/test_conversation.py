@@ -86,7 +86,74 @@ async def test_numbered_reply_picks_from_pending_list(seeded):
 
 async def test_yes_with_nothing_pending(env):
     out = await conversation.handle_inbound("y")
-    assert "Nothing is waiting" in out["reply"]
+    assert out["reply"] == conversation.NOTHING_ASKED
+
+
+# ── a bare Y/N only answers the question Runway just asked ────────────────────
+
+
+@pytest.fixture
+def asleep(monkeypatch):
+    """Outside business hours: decision_needed alerts are held, so nobody is asked."""
+    from runway import restraint
+
+    monkeypatch.setattr(restraint, "should_send_now", lambda tier, now=None: tier == "urgent")
+
+
+async def test_yes_answers_the_alert_the_last_message_asked_about(seeded, awake):
+    alert = await pipeline.process(TransactionIn(merchant="Cursor", amount=1400))
+    from runway import messaging
+
+    assert messaging.last_founder_message()["asks_alert_id"] == alert["id"]
+    await conversation.handle_inbound("yes")
+    assert seeded.get(E.ALERT, alert["id"])["founder_action"] == "Y"
+
+
+async def test_yes_after_an_unrelated_reply_approves_nothing(seeded, awake):
+    """Old bug: Runway answers a question, the founder says "y" to that, and the newest alert got approved."""
+    alert = await pipeline.process(TransactionIn(merchant="Cursor", amount=1400))
+    await conversation.handle_inbound("which subs renew in the next 30 days?")  # Runway's last text is now an answer
+    out = await conversation.handle_inbound("y")
+    assert out["reply"] == conversation.NOTHING_ASKED
+    assert not seeded.get(E.ALERT, alert["id"]).get("resolved")
+    assert not seeded.list(E.NEGOTIATION)
+
+
+async def test_yes_to_an_already_answered_ask_does_nothing(seeded, awake):
+    from runway import alerts
+
+    alert = await pipeline.process(TransactionIn(merchant="Cursor", amount=1400))
+    alerts.resolve(seeded.get(E.ALERT, alert["id"]), "N")  # answered elsewhere, e.g. the dashboard
+    out = await conversation.handle_inbound("y")
+    assert out["reply"] == conversation.NOTHING_ASKED
+    assert seeded.get(E.ALERT, alert["id"])["founder_action"] == "N"
+    assert not seeded.list(E.NEGOTIATION)
+
+
+async def test_yes_never_approves_a_held_alert(seeded, asleep):
+    alert = await pipeline.process(TransactionIn(merchant="Cursor", amount=1400))
+    assert alert["tier"] == "decision_needed" and not alert["delivered"]
+    out = await conversation.handle_inbound("y")
+    assert out["reply"] == conversation.NOTHING_ASKED
+    assert not seeded.get(E.ALERT, alert["id"]).get("resolved")
+
+
+async def test_yes_after_employee_explains_approves_that_expense(seeded, awake, monkeypatch):
+    """The "Approve it?" after an employee explains a charge refers to that charge, not a newer alert."""
+    founder = "+15559990000"
+    monkeypatch.setenv("RUNWAY_FOUNDER_PHONE", founder)
+    get_settings.cache_clear()
+    expense = await pipeline.process(TransactionIn(merchant="Delta", amount=320, employee_id=MARCUS))  # no memo
+    assert expense["alert_type"] == "expense_flagged"
+    newer = await pipeline.process(TransactionIn(merchant="Cursor", amount=1400))  # asked after the expense
+
+    phone = seeded.get(E.EMPLOYEE, MARCUS)["phone"]
+    await conversation.handle_inbound("flight to the Acme pitch", sender=phone)
+    await conversation.handle_inbound("y", sender=founder)
+
+    assert seeded.get(E.ALERT, expense["id"])["founder_action"] == "Y"
+    assert not seeded.get(E.ALERT, newer["id"]).get("resolved")
+    assert not seeded.list(E.NEGOTIATION)
 
 
 async def test_cancel_command_marks_savings(seeded):

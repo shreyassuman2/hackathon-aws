@@ -73,5 +73,7 @@ async def handle_reply(phone: str, text: str) -> dict:
             f'🚨 {emp["name"]} says a charge on their card isn\'t theirs: "{text}". You may want to freeze the card.'
         )
     elif thread.get("alert_id"):
-        await messaging.send_to_founder(f'{emp["name"]} explained the flagged charge: "{text}"', ask="Approve it?")
+        await messaging.send_to_founder(
+            f'{emp["name"]} explained the flagged charge: "{text}"', ask="Approve it?", alert_id=thread["alert_id"]
+        )
     return {"status": "escalated" if escalate else "resolved", "employee": emp["name"]}

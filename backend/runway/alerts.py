@@ -12,7 +12,7 @@ from datetime import UTC, datetime
 from runway import entities as E
 from runway import messaging, restraint
 from runway.models import Finding
-from runway.store import Record, find, find_one, get_store
+from runway.store import Record, find, get_store
 
 
 def _now() -> str:
@@ -54,7 +54,7 @@ async def raise_alert(f: Finding, *, transaction_id: str | None = None, amount: 
 
 async def deliver(alert: Record) -> Record:
     ask = alert.get("action_prompt") if alert.get("requires_action") else None
-    if await messaging.send_to_founder(alert["message"], ask=ask):
+    if await messaging.send_to_founder(alert["message"], ask=ask, alert_id=alert["id"]):
         return get_store().update(E.ALERT, alert["id"], {"delivered": True, "delivered_at": _now()})
     return alert
 
@@ -72,17 +72,6 @@ async def flush_held(now: datetime | None = None) -> int:
     for a in held:
         await deliver(a)
     return len(held)
-
-
-def latest_pending() -> Record | None:
-    """The alert a bare 'Y'/'N' refers to: the newest one that was delivered and still needs an answer."""
-    return find_one(
-        get_store(),
-        E.ALERT,
-        lambda a: a.get("requires_action") and not a.get("resolved") and a.get("delivered", True),
-        order_by="created_at",
-        desc=True,
-    )
 
 
 def pending(limit: int = 5) -> list[Record]:
