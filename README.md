@@ -92,5 +92,3 @@ infra/template.yaml AWS SAM: API Lambda, worker Lambda, digest Lambda, DynamoDB
 
 Four owners, one area each. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
----
-Rebuilt from our HackPrinceton Spring 2026 project (LEGR), which won Best Business & Enterprise.
