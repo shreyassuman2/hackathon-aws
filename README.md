@@ -1,10 +1,11 @@
 # Runway
 
-**An AI finance team for startups that lives in iMessage. Built on AWS.**
+**Runway replaces the finance hires an early-stage startup would otherwise make. Built on AWS.**
 
-Runway watches a startup's card spend, AI API usage and SaaS subscriptions, finds waste, and acts
-after one tap of approval. It negotiates renewals by email on its own, across days, and texts
-the founder when it's done: *"Closed Cursor at 22% off. $3,696/yr saved."*
+It watches every card swipe, AI API bill and SaaS subscription, catches waste, enforces expense
+policy, and negotiates renewals with vendors by email on its own, across days, then reports back:
+*"Closed Cursor at 22% off. $3,696/yr saved."* The founder only steps in to approve, from the
+dashboard or with a one-tap reply over iMessage.
 
 | Pillar | What it catches |
 |---|---|
