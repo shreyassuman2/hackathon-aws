@@ -1,6 +1,6 @@
 # Runway
 
-**Runway replaces the finance hires an early-stage startup would otherwise make. Built on AWS.**
+**Runway is the CFO an early-stage startup can't afford to hire yet. Built on AWS.**
 
 It watches every card swipe, AI API bill and SaaS subscription, catches waste, enforces expense
 policy, and negotiates renewals with vendors by email on its own, across days, then reports back:
