@@ -61,22 +61,3 @@ Runs anywhere: `make worker` locally, a scheduled Lambda in AWS, or `POST /negot
 
 The iMessage bridge can't run in AWS (iMessage needs a Mac). Expose it with a tunnel and set
 `BridgeUrl`, or leave messaging on `console` and use CloudWatch logs.
-
-## What changed from LEGR
-
-| LEGR | Runway |
-|---|---|
-| Dedalus agents + runner | Claude on Bedrock via `llm.py` |
-| Supabase Postgres + Realtime listener | DynamoDB (or local file); webhook calls the pipeline directly; dashboard polls |
-| Subprocess "Machines" + PID registry + JSON files | Store-backed state machine, scheduled tick |
-| `flux_query` RPC running LLM-generated SQL | Read-only query tools for Claude |
-| pgvector long-term memory (OpenAI embeddings) | Dropped for now; chat history kept (stretch goal) |
-| `negotiation_sm.py` **and** `machine/` (two negotiation systems) | One engine |
-| "email the team" command | Dropped (it never sent anything) |
-
-Bugs fixed in the rewrite: approving a negotiation alert failed (insert used columns that didn't
-exist); cancel/negotiate read non-existent price columns; demo replies replayed after a restart;
-"…if you'd like to proceed" counted as acceptance; substring Y/N matching ("today" → yes);
-compliance alerts could never be urgent; held business-hours alerts were never sent; founder vs.
-employee detection broke on phone formatting; hardcoded Supabase key and a real phone number in
-the repo.
