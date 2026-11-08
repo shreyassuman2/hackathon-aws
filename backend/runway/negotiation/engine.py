@@ -61,6 +61,24 @@ def list_negotiations(limit: int = 50) -> list[Record]:
 # ── lifecycle ─────────────────────────────────────────────────────────────────
 
 
+def _recipient(vendor: str, vendor_email: str | None, demo: bool) -> tuple[str, bool, str]:
+    """Who the vendor emails go to: (address, demo, note for the log).
+
+    Live mode never emails a guessed address like renewals@cursor.com, which is a real company.
+    It needs either RUNWAY_VENDOR_EMAIL_OVERRIDE (a test inbox) or an explicit vendor_email.
+    """
+    override = get_settings().vendor_email_override.strip()
+    if override:
+        return override, demo, f"vendor emails redirected to {override} (RUNWAY_VENDOR_EMAIL_OVERRIDE)"
+    if vendor_email:
+        return vendor_email, demo, ""
+    guessed = f"renewals@{vendor.lower().replace(' ', '')}.com"
+    if demo:
+        return guessed, True, ""
+    log.warning("live mail but no vendor email for %s; running in demo mode instead of emailing %s", vendor, guessed)
+    return guessed, True, f"no vendor email and no RUNWAY_VENDOR_EMAIL_OVERRIDE: demo mode, NOT emailing {guessed}"
+
+
 def start(
     vendor: str,
     price: float,
@@ -74,6 +92,8 @@ def start(
     if existing := active_for(vendor):
         return existing, False
     s = get_settings()
+    demo = s.mail == "demo" if demo is None else demo
+    to, demo, why = _recipient(vendor, vendor_email, demo)
     wins = find(
         get_store(),
         E.NEGOTIATION_HISTORY,
@@ -86,7 +106,7 @@ def start(
         E.NEGOTIATION,
         {
             "vendor": vendor,
-            "vendor_email": vendor_email or f"renewals@{vendor.lower().replace(' ', '')}.com",
+            "vendor_email": to,
             "original_price": float(price),
             "target_pct": float(target_pct or s.negotiation_default_target_pct),
             "floor_pct": s.negotiation_floor_pct,
@@ -96,7 +116,8 @@ def start(
             "current_offer_pct": None,
             "thread": [],
             "leverage_used": [],
-            "log": [f"{_now()} created (target {target_pct or s.negotiation_default_target_pct:g}%)"],
+            "log": [f"{_now()} created (target {target_pct or s.negotiation_default_target_pct:g}%)"]
+            + ([f"{_now()} {why}"] if why else []),
             "outbox": [],
             "inbox_cursor": 0,
             "seen_refs": [],

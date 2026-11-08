@@ -54,6 +54,9 @@ class Settings(BaseSettings):
     # ── Email (negotiations) ──────────────────────────────────────────────────
     mail: Literal["demo", "live"] = "demo"
     email_from: str = ""  # SES-verified sender
+    # Send EVERY vendor email here instead of the vendor (a teammate's inbox while testing/demoing).
+    # Without it, live mode only emails vendors whose address was given explicitly.
+    vendor_email_override: str = ""
     imap_host: str = "imap.gmail.com"
     imap_port: int = 993
     imap_user: str = ""

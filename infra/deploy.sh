@@ -48,6 +48,14 @@ OVERRIDES=("ApiToken=$TOKEN" "BedrockEndpoint=$BEDROCK_ENDPOINT" "ModelFast=$MOD
 [[ -n "${FOUNDER_PHONE:-}" ]] && OVERRIDES+=("FounderPhone=$FOUNDER_PHONE")
 [[ -n "${EMAIL_FROM:-}" ]] && OVERRIDES+=("EmailFrom=$EMAIL_FROM")
 [[ -n "${BRIDGE_URL:-}" ]] && OVERRIDES+=("BridgeUrl=$BRIDGE_URL")
+[[ -n "${VENDOR_EMAIL_OVERRIDE:-}" ]] && OVERRIDES+=("VendorEmailOverride=$VENDOR_EMAIL_OVERRIDE")
+[[ -n "${IMAP_USER:-}" ]] && OVERRIDES+=("ImapUser=$IMAP_USER")
+[[ -n "${IMAP_HOST:-}" ]] && OVERRIDES+=("ImapHost=$IMAP_HOST")
+# Gmail shows app passwords as "abcd efgh ijkl mnop"; the spaces aren't part of it and would break SAM's parsing.
+[[ -n "${IMAP_PASSWORD:-}" ]] && OVERRIDES+=("ImapPassword=${IMAP_PASSWORD// /}")
+if [[ -n "${EMAIL_FROM:-}" && -z "${VENDOR_EMAIL_OVERRIDE:-}" ]]; then
+  echo "⚠️  Live mail with no VENDOR_EMAIL_OVERRIDE: only negotiations started with an explicit vendor_email will email anyone."
+fi
 (cd infra && "${SAM[@]}" deploy --stack-name "$STACK" --region "$REGION" --resolve-s3 \
   --capabilities CAPABILITY_IAM --no-confirm-changeset --no-fail-on-empty-changeset \
   --parameter-overrides "${OVERRIDES[@]}")

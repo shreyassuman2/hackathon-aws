@@ -21,6 +21,24 @@ Parameters:
     Type: String
     Default: ""
     Description: SES-verified sender for negotiation emails. Leave empty to keep mail in demo mode.
+  VendorEmailOverride:
+    Type: String
+    Default: ""
+    Description: >-
+      Send every vendor email to this address instead (a teammate playing the vendor). Strongly recommended
+      with live mail; without it, only negotiations started with an explicit vendor_email are emailed.
+  ImapUser:
+    Type: String
+    Default: ""
+    Description: Inbox Runway reads vendor replies from (live mail), e.g. runway.demo@gmail.com.
+  ImapPassword:
+    Type: String
+    Default: ""
+    NoEcho: true
+    Description: App password for ImapUser (Gmail → Security → App passwords). Not the account password.
+  ImapHost:
+    Type: String
+    Default: imap.gmail.com
   BedrockEndpoint:
     Type: String
     Default: mantle
@@ -66,6 +84,10 @@ Globals:
         RUNWAY_FOUNDER_PHONE: !Ref FounderPhone
         RUNWAY_FOUNDER_NAME: !Ref FounderName
         RUNWAY_EMAIL_FROM: !Ref EmailFrom
+        RUNWAY_VENDOR_EMAIL_OVERRIDE: !Ref VendorEmailOverride
+        RUNWAY_IMAP_HOST: !Ref ImapHost
+        RUNWAY_IMAP_USER: !Ref ImapUser
+        RUNWAY_IMAP_PASSWORD: !Ref ImapPassword
         RUNWAY_MAIL: !If [LiveMail, live, demo]
         RUNWAY_NOTIFIER: !If [HasBridge, imessage, console]
         RUNWAY_IMESSAGE_BRIDGE_URL: !Ref BridgeUrl
