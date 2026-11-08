@@ -182,3 +182,32 @@ async def test_spend_by_pillar_includes_top_vendors():
     out = await ask.spend_by_pillar(36500)
     assert set(out["top_vendors"]) == set(out["by_pillar"])
     assert all(len(v) <= 3 for v in out["top_vendors"].values())
+
+
+def test_router_catches_one_letter_typos_and_new_ai_tools():
+    from runway.agents.router import known_pillar, match_vendor
+    from runway.models import TransactionIn
+
+    def pillar(merchant):
+        return known_pillar(TransactionIn(merchant=merchant, amount=10))
+
+    # What the card terminal sent: a typo of Vercel and OpenAI's Codex.
+    assert pillar("vercil") == "saas_sprawl"
+    assert match_vendor(TransactionIn(merchant="vercil", amount=10))[1] == "looks like Vercel (one letter off)"
+    assert pillar("codeX") == "ai_spend"
+    assert pillar("ChatGPT Plus") == "ai_spend"
+    assert pillar("claude.ai") == "ai_spend"
+    assert pillar("Vercel") == "saas_sprawl"  # exact names still win
+    assert match_vendor(TransactionIn(merchant="Vercel", amount=10))[1] == "known vendor"
+
+    # Near misses that are other companies must not be routed.
+    assert pillar("Motion") is None  # not Notion: different first letter
+    assert pillar("Sigma") is None  # not Figma
+    assert pillar("Coherent") is None  # not Cohere: two letters off
+    assert pillar("Bloom") is None  # Loom is too short to typo-match
+    assert pillar("Verclle") is None  # two edits
+
+
+async def test_typo_merchant_goes_to_its_pillar_not_unknown(seeded):
+    alert = await pipeline.process(TransactionIn(merchant="vercil", amount=1500))
+    assert alert["pillar"] == "saas_sprawl" and alert["alert_type"] != "categorize"
