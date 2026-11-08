@@ -3,8 +3,9 @@
 // ============================================================
 
 import { fetchPendingAlerts, sendCommand } from '../lib/api.js';
+import { ICON_ARROW } from '../lib/ui.js';
 
-const BANNER_LABELS = { warning: 'Warning', critical: 'Critical', info: 'Info' };
+const BANNER_LABELS = { warning: 'Needs a decision', critical: 'Urgent', info: 'All clear' };
 
 /** Fill the page's banner from the live pending alerts (text set via textContent: alert text is data). */
 export async function hydrateAlertBanner() {
@@ -35,32 +36,24 @@ export async function hydrateAlertBanner() {
  * @param {Object} alert - { type: 'warning'|'critical'|'info', title, desc, action, command }
  */
 export function renderAlert(alert) {
-  const labels = {
-    warning: 'Warning',
-    critical: 'Critical',
-    info: 'Info',
-  };
-
+  const labels = { warning: 'Needs a decision', critical: 'Urgent', info: 'All clear' };
   const actionId = `alert-action-${Math.random().toString(36).slice(2, 8)}`;
-
   return `
-    <div class="alert-banner" id="alert-banner">
-      <div class="alert-banner-icon ${alert.type}">
-        <span></span>
-      </div>
+    <div class="alert-banner" id="alert-banner" role="status">
+      <div class="alert-banner-icon ${alert.type}"><span></span></div>
       <div class="alert-banner-content">
         <div class="alert-banner-meta">${labels[alert.type] || 'Update'}</div>
         <div class="alert-banner-title">${alert.title}</div>
         <div class="alert-banner-desc">${alert.desc}</div>
       </div>
-      ${alert.action ? `<button class="alert-banner-action" id="${actionId}" ${alert.navigate ? `data-navigate="${alert.navigate}"` : `data-command="${alert.command || alert.action.toLowerCase()}"`}>${alert.action}</button>` : ''}
+      ${alert.action ? `<button class="btn" id="${actionId}" data-banner-action ${alert.navigate ? `data-navigate="${alert.navigate}"` : `data-command="${alert.command || alert.action.toLowerCase()}"`}>${alert.action}${ICON_ARROW}</button>` : ''}
     </div>
   `;
 }
 
 export function bindAlertActions() {
   hydrateAlertBanner();
-  document.querySelectorAll('.alert-banner-action').forEach(btn => {
+  document.querySelectorAll('[data-banner-action]').forEach(btn => {
     // app.js and each page both call this; bind once or a click sends the command twice.
     if (btn.dataset.bound) return;
     btn.dataset.bound = '1';
@@ -70,22 +63,22 @@ export function bindAlertActions() {
         return;
       }
       const command = btn.dataset.command;
-      const original = btn.textContent;
-      btn.textContent = '...';
+      const original = btn.innerHTML;
+      btn.textContent = 'Asking…';
       btn.disabled = true;
 
       try {
         const reply = await sendCommand(command);
-        btn.textContent = '✓ Sent';
-        btn.style.color = 'var(--green)';
+        btn.innerHTML = original;
+        btn.disabled = false;
         // Show reply as a toast or update the desc
         const banner = btn.closest('.alert-banner');
         if (banner) {
           const desc = banner.querySelector('.alert-banner-desc');
-          if (desc) desc.textContent = reply.slice(0, 120);
+          if (desc) { desc.textContent = reply; desc.classList.add('is-reply'); }
         }
       } catch {
-        btn.textContent = original;
+        btn.innerHTML = original;
         btn.disabled = false;
       }
     });

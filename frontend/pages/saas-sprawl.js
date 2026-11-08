@@ -4,39 +4,37 @@
 
 import { renderMetrics } from '../components/metrics.js';
 import { renderTable, badge, formatCurrency } from '../components/tables.js';
-import { createBarChart, createDoughnutChart } from '../components/charts.js';
+import { createBarChart, createDoughnutChart, renderLegendRow, seriesColors } from '../components/charts.js';
+import { escapeHtml, vendorTile } from '../lib/ui.js';
 import { fetchSubscriptions, fetchSeatUsage } from '../lib/api.js';
-import { renderAlert, bindAlertActions } from '../components/alerts.js';
+import { renderAlert } from '../components/alerts.js';
 
 export function renderSaaSSprawl() {
   const metricsHTML = renderMetrics([
-    { id: 'totalSaaSSpend',       label: 'Total SaaS Spend',       value: '—', sub: 'Per month',       color: 'blue'   },
-    { id: 'saasGhostSeats',       label: 'Ghost Seats',             value: '—', sub: 'Across all tools',color: 'purple' },
-    { id: 'upcomingRenewals',     label: 'Upcoming Renewals',       value: '—', sub: 'Next 14 days',    color: 'orange' },
-    { id: 'zombieSubscriptions',  label: 'Zombie Subscriptions',    value: '—', sub: 'Near-zero usage', color: 'red'    },
+    { id: 'totalSaaSSpend', label: 'SaaS spend', value: '—', sub: 'per month, all contracts' },
+    { id: 'saasGhostSeats', label: 'Seats nobody uses', value: '—', sub: 'across every tool' },
+    { id: 'upcomingRenewals', label: 'Renewing soon', value: '—', sub: 'in the next 14 days' },
+    { id: 'zombieSubscriptions', label: 'Unused subscriptions', value: '—', sub: 'paid seats, zero active' },
   ]);
-
-  const alertHTML = renderAlert({
-    type: 'info',
-    title: 'Checking what needs you…',
-    desc: '',
-    action: 'Show pending',
-    command: 'show pending',
-  });
 
   return `
     <div class="page" id="page-saas-sprawl">
-      ${alertHTML}
+      <div class="page-header">
+        <div>
+          <h1>SaaS</h1>
+          <p>Every subscription, how much of it is used, and what renews next.</p>
+        </div>
+      </div>
+      ${renderAlert({ type: 'info', title: 'Checking what needs you…', desc: '', action: 'Show pending', command: 'show pending' })}
       ${metricsHTML}
 
       <div class="charts-grid">
-        <div class="chart-card" style="grid-column: 1 / -1;">
+        <div class="chart-card wide">
           <div class="chart-header">
-            <div class="chart-title purple">SEAT UTILIZATION BY TOOL</div>
+            <div><div class="chart-title">Seats paid and used</div><div class="chart-sub">Per tool, from usage signals</div></div>
+            <div id="legend-seats"></div>
           </div>
-          <div class="chart-body">
-            <canvas id="chart-seat-utilization"></canvas>
-          </div>
+          <div class="chart-body"><canvas id="chart-seat-utilization" role="img" aria-label="Seats paid and used per tool"></canvas></div>
         </div>
       </div>
 
@@ -44,16 +42,13 @@ export function renderSaaSSprawl() {
 
       <div class="charts-grid" id="saas-bottom-grid">
         <div class="timeline-card" id="saas-timeline">
-          <div class="chart-header">
-            <div class="chart-title orange">UPCOMING RENEWALS</div>
-          </div>
+          <div class="chart-header"><div><div class="chart-title">Renewing next</div><div class="chart-sub">Act before the notice window closes</div></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title blue">SPEND BY PLAN TIER</div>
-          </div>
+          <div class="chart-header"><div><div class="chart-title">Spend by plan tier</div><div class="chart-sub">Monthly cost</div></div></div>
           <div class="chart-body donut">
-            <canvas id="chart-saas-category"></canvas>
+            <div class="donut-canvas"><canvas id="chart-saas-category" role="img" aria-label="Spend by plan tier"></canvas></div>
+            <ul class="legend" id="legend-saas-category"></ul>
           </div>
         </div>
       </div>
@@ -62,7 +57,7 @@ export function renderSaaSSprawl() {
 }
 
 export function initSaaSSprawlCharts() {
-  bindAlertActions();
+  const [s1, s2, s3] = seriesColors();
   Promise.all([fetchSubscriptions(), fetchSeatUsage()]).then(([subs, seats]) => {
     if (!subs.length) return;
 
@@ -109,19 +104,18 @@ export function initSaaSSprawlCharts() {
     const tableEl = document.getElementById('saas-table');
     if (tableEl) {
       tableEl.innerHTML = renderTable({
-        title: 'Subscription Inventory', titleColor: 'blue', id: 'table-subscriptions',
+        title: 'Subscriptions', id: 'table-subscriptions',
         columns: [
-          { key: 'vendor',      label: 'Vendor',        render: v => `<strong>${v}</strong>` },
-          { key: 'category',    label: 'Plan',          render: v => `<span class="text-muted">${v}</span>` },
-          { key: 'seatsPaid',   label: 'Seats Paid',    align: 'right', render: v => v ?? '<span class="text-muted">N/A</span>' },
-          { key: 'seatsActive', label: 'Seats Active',  align: 'right', render: v => v ?? '<span class="text-muted">N/A</span>' },
-          { key: 'utilization', label: 'Utilization',   align: 'right', render: v => {
-            if (v === null) return '<span class="text-muted">N/A</span>';
-            const c = v >= 80 ? 'healthy' : v >= 50 ? 'warning' : 'critical';
-            return `<span class="badge ${c}">${v}%</span>`;
+          { key: 'vendor',      label: 'Tool',          render: v => `<span class="vendor">${vendorTile(v, { size: 'sm' })}${escapeHtml(v)}</span>` },
+          { key: 'category',    label: 'Plan',          render: v => `<span class="text-muted">${escapeHtml(v)}</span>` },
+          { key: 'seatsPaid',   label: 'Seats paid',    align: 'right', render: v => v ?? '<span class="text-muted">—</span>' },
+          { key: 'seatsActive', label: 'Seats used',    align: 'right', render: v => v ?? '<span class="text-muted">—</span>' },
+          { key: 'utilization', label: 'Used',          render: v => {
+            if (v === null) return '<span class="text-muted">Usage-based</span>';
+            return `<span class="meter"><span class="meter-track"><span class="meter-fill" style="width:${v}%"></span></span><span class="mono">${v}%</span></span>`;
           }},
-          { key: 'monthlyCost', label: 'Monthly Cost',  align: 'right', render: v => formatCurrency(v) },
-          { key: 'renewal',     label: 'Renewal',       render: v => v ? new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '<span class="text-muted">—</span>' },
+          { key: 'monthlyCost', label: 'Per month',     align: 'right', render: v => formatCurrency(v) },
+          { key: 'renewal',     label: 'Renews',        render: v => v ? new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '<span class="text-muted">—</span>' },
           { key: 'status',      label: 'Status',        render: v => badge(v) },
         ],
         rows,
@@ -137,15 +131,14 @@ export function initSaaSSprawlCharts() {
     if (timelineEl && upcoming.length) {
       timelineEl.innerHTML += upcoming.map(r => {
         const days = Math.ceil((new Date(r.renewal) - today) / (1000 * 60 * 60 * 24));
-        const dot  = days <= 5 ? 'red' : days <= 10 ? 'orange' : 'green';
-        const seats = r.seatsPaid ? `${r.seatsActive}/${r.seatsPaid} seats active` : 'Usage-based';
+        const seats = r.seatsPaid ? `${r.seatsActive} of ${r.seatsPaid} seats used` : 'Usage-based';
         return `
           <div class="timeline-item">
             <div class="timeline-date">${new Date(r.renewal).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
-            <div class="timeline-dot ${dot}"></div>
+            ${vendorTile(r.vendor, { size: 'sm' })}
             <div class="timeline-info">
-              <div class="timeline-vendor">${r.vendor}</div>
-              <div class="timeline-detail">${seats} · ${days} day${days !== 1 ? 's' : ''} away</div>
+              <div class="timeline-vendor">${escapeHtml(r.vendor)}</div>
+              <div class="timeline-detail ${days <= 7 ? 'timeline-soon' : ''}">${seats} · in ${days} day${days !== 1 ? 's' : ''}</div>
             </div>
             <div class="timeline-cost">${formatCurrency(r.monthlyCost)}/mo</div>
           </div>`;
@@ -156,9 +149,11 @@ export function initSaaSSprawlCharts() {
     const seatRows = rows.filter(r => r.seatsPaid !== null);
     if (seatRows.length) {
       createBarChart('chart-seat-utilization', seatRows.map(r => r.vendor), [
-        { label: 'Seats Paid',   data: seatRows.map(r => r.seatsPaid),   color: 'rgba(168,85,247,0.5)' },
-        { label: 'Seats Active', data: seatRows.map(r => r.seatsActive), color: 'rgba(34,197,94,0.7)'  },
+        { label: 'Seats paid', data: seatRows.map(r => r.seatsPaid), color: s1 },
+        { label: 'Seats used', data: seatRows.map(r => r.seatsActive), color: s3 },
       ]);
+      const lg = document.getElementById('legend-seats');
+      if (lg) lg.innerHTML = renderLegendRow([{ label: 'Seats paid', color: s1 }, { label: 'Seats used', color: s3 }]);
     }
 
     // ── Spend by plan tier donut ──────────────────────────────
@@ -167,11 +162,16 @@ export function initSaaSSprawlCharts() {
       const tier = s.plan_tier || 'Other';
       tiers[tier] = (tiers[tier] || 0) + (s.monthly_cost || 0);
     });
-    createDoughnutChart(
-      'chart-saas-category',
-      Object.keys(tiers),
-      Object.values(tiers),
-      ['#a855f7', '#3b82f6', '#22c55e', '#f59e0b', '#06b6d4', '#ef4444']
-    );
+    // Three validated series colours: the two biggest tiers, the rest folded into "Other".
+    const [labels, values] = topTwoAndOther(tiers);
+    createDoughnutChart('chart-saas-category', labels, values, [s1, s2, s3].slice(0, labels.length), { legendId: 'legend-saas-category' });
   });
+}
+
+export function topTwoAndOther(totals) {
+  const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+  const head = sorted.slice(0, 2);
+  const rest = sorted.slice(2).reduce((sum, [, v]) => sum + v, 0);
+  const out = rest > 0 ? [...head, ['Other', rest]] : head;
+  return [out.map(([k]) => k), out.map(([, v]) => Math.round(v))];
 }

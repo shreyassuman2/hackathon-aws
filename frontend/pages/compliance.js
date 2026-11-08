@@ -4,47 +4,44 @@
 
 import { renderMetrics } from '../components/metrics.js';
 import { renderTable, badge, formatCurrency } from '../components/tables.js';
-import { createDoughnutChart } from '../components/charts.js';
+import { createDoughnutChart, seriesColors } from '../components/charts.js';
+import { cssVar, escapeHtml, vendorTile } from '../lib/ui.js';
+import { topTwoAndOther } from './saas-sprawl.js';
 import { fetchComplianceTransactions, fetchEmployees } from '../lib/api.js';
-import { renderAlert, bindAlertActions } from '../components/alerts.js';
+import { renderAlert } from '../components/alerts.js';
 
 export function renderCompliance() {
   const metricsHTML = renderMetrics([
-    { id: 'totalExpenses',   label: 'Total Expenses',  value: '—', sub: 'This month',       color: 'white'  },
-    { id: 'autoApproved',    label: 'Auto-Approved',   value: '—', sub: 'Policy compliant', color: 'green'  },
-    { id: 'flaggedExpenses', label: 'Flagged',         value: '—', sub: 'Policy violations',color: 'red'    },
-    { id: 'pendingExpenses', label: 'Pending Review',  value: '—', sub: 'Awaiting decision',color: 'orange' },
+    { id: 'totalExpenses', label: 'Team expenses', value: '—', sub: 'on employee cards' },
+    { id: 'autoApproved', label: 'Approved', value: '—', sub: 'inside policy' },
+    { id: 'flaggedExpenses', label: 'Flagged', value: '—', sub: 'outside policy' },
+    { id: 'pendingExpenses', label: 'Pending', value: '—', sub: 'waiting on a decision' },
   ]);
-
-  const alertHTML = renderAlert({
-    type: 'info',
-    title: 'Checking what needs you…',
-    desc: '',
-    action: 'Show pending',
-    command: 'show pending',
-  });
 
   return `
     <div class="page" id="page-compliance">
-      ${alertHTML}
+      <div class="page-header">
+        <div>
+          <h1>Expenses</h1>
+          <p>Every swipe on a team card, checked against your policy. Quiet when clean.</p>
+        </div>
+      </div>
+      ${renderAlert({ type: 'info', title: 'Checking what needs you…', desc: '', action: 'Show pending', command: 'show pending' })}
       ${metricsHTML}
 
-      <div class="charts-grid">
+      <div class="charts-grid even">
         <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title orange">EXPENSES BY MERCHANT</div>
-          </div>
+          <div class="chart-header"><div><div class="chart-title">Where the money went</div><div class="chart-sub">By merchant</div></div></div>
           <div class="chart-body donut">
-            <canvas id="chart-expense-category"></canvas>
+            <div class="donut-canvas"><canvas id="chart-expense-category" role="img" aria-label="Expenses by merchant"></canvas></div>
+            <ul class="legend" id="legend-expense-category"></ul>
           </div>
         </div>
-
         <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title green">APPROVAL BREAKDOWN</div>
-          </div>
+          <div class="chart-header"><div><div class="chart-title">Policy outcome</div><div class="chart-sub">Number of expenses</div></div></div>
           <div class="chart-body donut">
-            <canvas id="chart-approval-breakdown"></canvas>
+            <div class="donut-canvas"><canvas id="chart-approval-breakdown" role="img" aria-label="Policy outcome"></canvas></div>
+            <ul class="legend" id="legend-approval-breakdown"></ul>
           </div>
         </div>
       </div>
@@ -55,7 +52,7 @@ export function renderCompliance() {
 }
 
 export function initComplianceCharts() {
-  bindAlertActions();
+  const [s1, s2, s3] = seriesColors();
   Promise.all([fetchComplianceTransactions(), fetchEmployees()]).then(([txns, emps]) => {
     if (!txns.length) return;
 
@@ -97,24 +94,18 @@ export function initComplianceCharts() {
     const tableEl = document.getElementById('compliance-table');
     if (tableEl) {
       tableEl.innerHTML = renderTable({
-        title: 'Recent Expenses', titleColor: 'orange', id: 'table-expenses',
+        title: 'Recent expenses', id: 'table-expenses',
         columns: [
-          { key: 'employee_id', label: 'Employee', render: v => {
-            const emp = empMap[v] || { name: 'Unknown', role: '—' };
-            const initials = emp.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-            return `<div style="display:flex;align-items:center;gap:8px">
-              <div style="width:28px;height:28px;border-radius:50%;background:var(--bg-elevated);border:1px solid var(--border-default);display:flex;align-items:center;justify-content:center;font-size:0.625rem;font-weight:600;color:var(--text-secondary)">${initials}</div>
-              <div>
-                <div style="font-weight:600;font-size:0.8125rem">${emp.name}</div>
-                <div style="font-size:0.6875rem;color:var(--text-tertiary)">${emp.role}</div>
-              </div>
-            </div>`;
+          { key: 'employee_id', label: 'Person', render: v => {
+            const emp = empMap[v] || { name: 'Unknown', role: '' };
+            const initials = escapeHtml(String(emp.name).split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase());
+            return `<div class="person"><span class="person-avatar">${initials}</span>
+              <div><div class="person-name">${escapeHtml(emp.name)}</div><div class="person-role">${escapeHtml(emp.role || '')}</div></div></div>`;
           }},
-          { key: 'merchant',     label: 'Merchant' },
-          { key: 'memo',         label: 'Note',     render: v => `<span class="text-muted">${v || '—'}</span>` },
+          { key: 'merchant',     label: 'Merchant', render: v => `<span class="vendor">${vendorTile(v, { size: 'sm' })}${escapeHtml(v)}</span>` },
+          { key: 'memo',         label: 'Note',     render: v => `<span class="text-muted">${escapeHtml(v || '—')}</span>` },
           { key: 'amount',       label: 'Amount',   align: 'right', render: v => formatCurrency(v) },
           { key: 'date',         label: 'Date',     render: v => new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) },
-          { key: 'policyCheck',  label: 'Policy',   render: v => `<span class="badge ${policyMap[v]}">${v === 'pass' ? 'Pass' : v === 'review' ? 'Review' : 'Fail'}</span>` },
           { key: 'displayStatus',label: 'Status',   render: v => badge(v) },
         ],
         rows,
@@ -126,19 +117,12 @@ export function initComplianceCharts() {
     txns.forEach(t => {
       merchants[t.merchant] = (merchants[t.merchant] || 0) + (t.amount || 0);
     });
-    createDoughnutChart(
-      'chart-expense-category',
-      Object.keys(merchants),
-      Object.values(merchants).map(Math.round),
-      ['#f59e0b', '#3b82f6', '#a855f7', '#22c55e', '#06b6d4', '#ef4444', '#eab308']
-    );
+    const [mLabels, mValues] = topTwoAndOther(merchants);
+    createDoughnutChart('chart-expense-category', mLabels, mValues, [s1, s2, s3].slice(0, mLabels.length), { legendId: 'legend-expense-category' });
 
     // ── Approval breakdown donut ──────────────────────────────
-    createDoughnutChart(
-      'chart-approval-breakdown',
-      ['Approved', 'Flagged', 'Pending'],
-      [autoApproved, flagged, pending],
-      ['#22c55e', '#ef4444', '#f59e0b']
-    );
+    // Status colours (reserved for state), always shown with their label in the legend.
+    createDoughnutChart('chart-approval-breakdown', ['Approved', 'Flagged', 'Pending'], [autoApproved, flagged, pending],
+      [cssVar('--good'), cssVar('--critical'), cssVar('--warning')], { legendId: 'legend-approval-breakdown', count: true });
   });
 }
