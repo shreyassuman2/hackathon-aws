@@ -176,25 +176,57 @@ def cancel_negotiation(neg_id: str) -> Record:
 # ── dashboard ─────────────────────────────────────────────────────────────────
 
 
+def _spend_between(start: datetime, end: datetime) -> float:
+    lo, hi = start.isoformat(), end.isoformat()
+    rows = find(get_store(), E.TRANSACTION, lambda t: lo <= (t.get("created_at") or "") < hi)
+    return sum(float(t.get("amount") or 0) for t in rows)
+
+
 @api.get("/dashboard/metrics")
-async def dashboard_metrics(days: int = 30) -> dict:
+async def dashboard_metrics(days: int = Query(30, ge=1, le=365)) -> dict:
+    """Numbers for the dashboard's metric cards.
+
+    totalMonthlySpend    card spend over the last `days` days
+    spendChangePct       that spend vs the `days` before it, in % (None when there is nothing to compare)
+    identifiedSavings    savings found so far, $/month (pending + approved + realized)
+    newSavings7d         savings found in the last 7 days, $/month
+    activeSubscriptions  SaaS contracts on file that aren't cancelled
+    ghostSeats           seats nobody has used recently
+    complianceFlags      open compliance alerts: expenses waiting on the founder
+    pendingReview        compliance expenses still marked pending
+    activeNegotiations   renewal negotiations in progress
+    """
     store = get_store()
     spend = await ask.spend_by_pillar(days)
     savings = await ask.savings_summary()
     negs = store.list(E.NEGOTIATION)
+    pending = alerts.pending(limit=1000)
+
+    now = datetime.now(UTC)
+    current = _spend_between(now - timedelta(days=days), now)
+    previous = _spend_between(now - timedelta(days=2 * days), now - timedelta(days=days))
+    week_ago = (now - timedelta(days=7)).isoformat()
+    new_savings = sum(
+        float(s.get("amount_monthly") or 0) for s in store.list(E.SAVINGS) if (s.get("created_at") or "") >= week_ago
+    )
     return {
         # camelCase keys are the ones the dashboard's metric cards read (frontend/lib/api.js)
         "totalMonthlySpend": round(sum(spend["by_pillar"].values())),
+        "spendChangePct": round((current - previous) / previous * 100, 1) if previous > 0 else None,
         "identifiedSavings": round(sum(savings["monthly_by_status"].values())),
+        "newSavings7d": round(new_savings),
         "ghostSeats": len(find(store, E.SEAT, lambda s: s.get("is_dormant"))),
-        "complianceFlags": len(alerts.pending(limit=1000)),
+        "complianceFlags": sum(1 for a in pending if a.get("pillar") == "compliance"),
+        "pendingReview": len(
+            find(store, E.TRANSACTION, lambda t: t.get("pillar") == "compliance" and t.get("status") == "pending")
+        ),
         "activeSubscriptions": len(find(store, E.RENEWAL, lambda r: r.get("status") != "cancelled")),
         "activeNegotiations": sum(1 for n in negs if n.get("status") in engine.ACTIVE),
         "days": days,
         "spend_total": round(sum(spend["by_pillar"].values()), 2),
         "spend_by_pillar": spend["by_pillar"],
         "savings_monthly_by_status": savings["monthly_by_status"],
-        "pending_alerts": len(alerts.pending(limit=1000)),
+        "pending_alerts": len(pending),
         "negotiations_active": sum(1 for n in negs if n.get("status") in engine.ACTIVE),
         "negotiations_won": sum(1 for n in negs if n.get("status") == "closed_won"),
         "autonomous_actions_7d": len(await ask.autonomous_actions(7)),
