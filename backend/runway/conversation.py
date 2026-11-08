@@ -1,12 +1,14 @@
 """Inbound iMessage routing.
 
     sender is an employee (not the founder) ─▶ employees.handle_reply
-    "y" / "n" / "y 2"                         ─▶ answer the latest (or #2) pending alert
+    "y" / "n" / "y 2"                         ─▶ answer the alert just asked about (or #2 of 'show pending')
     "cancel Notion", "show pending", ...      ─▶ agents.commands
     anything else                             ─▶ Ask-Anything
 
 Y/N is an exact-word match on the whole message ("today" is not "y", "no way that's right?" is a
-question). A bare Y answers the newest alert the founder was actually sent.
+question). A bare Y/N only answers the alert Runway's *last* message to the founder asked about,
+while that alert is still open. After an FYI, an answer or anything else, it asks which one you mean
+instead of guessing, so a stray "y" can never approve spend nobody asked about.
 """
 
 from __future__ import annotations
@@ -40,6 +42,25 @@ def parse_decision(text: str) -> tuple[bool, int | None] | None:
     if word in NO:
         return False, n
     return None
+
+
+NOTHING_ASKED = (
+    "I'm not sure what that's a yes or no to: my last message didn't ask you anything. "
+    "Say 'show pending', then reply Y 1 / N 1 (etc.)."
+)
+
+
+def asked_alert() -> Record | None:
+    """The alert a bare Y/N answers: only the one Runway's last message to the founder asked about,
+    and only while it's still open. Anything else (an FYI, an answer, a stale or resolved ask) is no."""
+    last = messaging.last_founder_message()
+    alert_id = (last or {}).get("asks_alert_id")
+    if not alert_id:
+        return None
+    alert = get_store().get(E.ALERT, alert_id)
+    if not alert or alert.get("resolved"):
+        return None
+    return alert
 
 
 async def apply_decision(alert: Record, accept: bool) -> str | None:
@@ -83,11 +104,14 @@ async def apply_decision(alert: Record, accept: bool) -> str | None:
 async def _founder_reply(text: str, chat_id: str) -> str | None:
     if (d := parse_decision(text)) is not None:
         accept, n = d
-        alert = commands.find_pending_by_index(n) if n else alerts.latest_pending()
-        if alert is None:
-            if n:
+        if n:  # "Y 2": explicit, from the 'show pending' list
+            alert = commands.find_pending_by_index(n)
+            if alert is None:
                 return f"I don't have a #{n}. Say 'show pending' to see the list."
-            return "Nothing is waiting on you right now. Say 'show pending' to check held items."
+            return await apply_decision(alert, accept)
+        alert = asked_alert()
+        if alert is None:
+            return NOTHING_ASKED
         return await apply_decision(alert, accept)
 
     if (cmd := await commands.parse(text)) is not None:
