@@ -8,9 +8,9 @@ the founder when it's done: *"Closed Cursor at 22% off. $3,696/yr saved."*
 
 | Pillar | What it catches |
 |---|---|
-| 🤖 **AI spend** | Week-over-week spikes, expensive models doing cheap work, forgotten batch jobs |
-| 📦 **SaaS sprawl** | Dormant seats, overlapping tools, unused add-ons, shadow IT, upcoming renewals (then negotiates them) |
-| 💳 **Compliance** | Card swipes over cap, missing memos, red-flag merchants. Asks the employee before bothering the founder |
+| **AI spend** | Week-over-week spikes, expensive models doing cheap work, forgotten batch jobs |
+| **SaaS sprawl** | Dormant seats, overlapping tools, unused add-ons, shadow IT, upcoming renewals (then negotiates them) |
+| **Compliance** | Card swipes over cap, missing memos, red-flag merchants. Asks the employee before bothering the founder |
 
 ## Quick start (no AWS account needed)
 
