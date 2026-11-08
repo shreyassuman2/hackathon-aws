@@ -6,7 +6,8 @@
     anything else                             ─▶ Ask-Anything
 
 Y/N is an exact-word match on the whole message ("today" is not "y", "no way that's right?" is a
-question). A bare Y answers the newest alert the founder was actually sent.
+question). A bare Y answers the newest alert the founder was actually sent, and only if Runway's last text
+asked a yes/no question; otherwise it is ignored ("y 2" always counts).
 """
 
 from __future__ import annotations
@@ -80,6 +81,14 @@ async def apply_decision(alert: Record, accept: bool) -> str | None:
     return "Approved. ✓"
 
 
+def _awaiting_answer(chat_id: str) -> bool:
+    """True if Runway's last text to the founder was a yes/no question (an alert that said "Reply Y or N")."""
+    for m in reversed(messaging.chat_history(chat_id, limit=8)):
+        if m["role"] == "assistant":
+            return "Reply Y or N" in m["content"]
+    return False
+
+
 async def _founder_reply(text: str, chat_id: str) -> str | None:
     if (d := parse_decision(text)) is not None:
         accept, n = d
@@ -88,6 +97,9 @@ async def _founder_reply(text: str, chat_id: str) -> str | None:
             if n:
                 return f"I don't have a #{n}. Say 'show pending' to see the list."
             return "Nothing is waiting on you right now. Say 'show pending' to check held items."
+        # A bare Y/N only counts right after Runway asked. "y 2" is explicit, so it always counts.
+        if n is None and not _awaiting_answer(chat_id):
+            return "I'm not waiting on a yes or no from you right now. Say 'show pending' to see what's open."
         return await apply_decision(alert, accept)
 
     if (cmd := await commands.parse(text)) is not None:

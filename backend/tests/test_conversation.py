@@ -137,3 +137,17 @@ async def test_digest_bundles_held_items_once(seeded):
     assert first["sent"] and first["items"] >= 1 and "Blue Bottle" in first["text"]
     second = await digest.send("weekly")
     assert second["items"] == 0
+
+
+async def test_bare_yes_ignored_unless_runway_just_asked(seeded, awake):
+    alert = await pipeline.process(TransactionIn(merchant="Cursor", amount=1400))
+    await conversation.handle_inbound("what did we spend on AI last month")  # Runway's last text is an answer
+    out = await conversation.handle_inbound("y")
+    assert "not waiting on a yes or no" in out["reply"]
+    assert not seeded.get(E.ALERT, alert["id"]).get("resolved") and not seeded.list(E.NEGOTIATION)
+
+
+async def test_numbered_yes_still_counts_without_a_fresh_question(seeded):
+    rows = commands.pending_lines()
+    await conversation.handle_inbound("y 1")
+    assert seeded.get(E.ALERT, rows[0]["id"])["founder_action"] == "Y"
