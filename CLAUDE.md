@@ -1,6 +1,6 @@
 # Runway: notes for AI coding agents
 
-Read README.md, CONTRIBUTING.md and docs/ARCHITECTURE.md first.
+Read README.md and docs/ARCHITECTURE.md first.
 
 - Backend is `backend/runway` (Python 3.12, uv). Run `make test` and `make lint` before finishing any change.
 - Only `runway/llm.py` may import `anthropic`. Agents call `llm.text` / `llm.structured` / `llm.tool_chat`

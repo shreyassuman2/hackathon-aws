@@ -41,7 +41,7 @@ to the console, Claude off (deterministic templates). Turn pieces on in `.env`:
 | Real iMessages | `RUNWAY_NOTIFIER=imessage` + `make bridge` on a Mac |
 | Real vendor email | `RUNWAY_MAIL=live` + SES sender + IMAP inbox |
 
-Other tools: `make frontend` (dashboard on :3000), `make emulator` (card-swipe page), `make test`.
+**Dashboard:** `make frontend`, then open localhost:3000. **Card terminal:** localhost:3000/terminal/index.html to swipe test charges.
 
 ## How it fits together
 
@@ -83,12 +83,11 @@ backend/            Python 3.12 · FastAPI · uv
     seed/demo.json    Acme Labs demo data
   tests/
 bridge/             Node: Mac Messages ⇄ API
-frontend/           Vite dashboard (to be redesigned)
-tools/purchase-emulator/   card-swipe page for demos
+frontend/           Vite dashboard (card terminal in public/terminal/)
 infra/template.yaml AWS SAM: API Lambda, worker Lambda, digest Lambda, DynamoDB
 ```
 
 ## Team
 
-Team of 4. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Team of 4.
 
