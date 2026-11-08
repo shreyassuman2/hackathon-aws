@@ -27,7 +27,7 @@ bridge: ## Run the iMessage bridge (macOS)
 	cd bridge && npm run dev
 
 emulator: ## Open the card-swipe emulator
-	open tools/purchase-emulator/index.html
+	open http://localhost:3000/terminal/index.html   # needs `make frontend` running (same origin as the dashboard)
 
 test: ## Run backend tests
 	$(BACKEND) uv run pytest -q
