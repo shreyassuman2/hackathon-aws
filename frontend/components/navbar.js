@@ -19,6 +19,7 @@ export function renderNavbar(activeTab) {
   return `
     <header class="navbar" id="navbar">
       <a href="#main" class="skip-link">Skip to content</a>
+      <div class="navbar-left">
       <a href="#dashboard" class="navbar-brand" aria-label="Runway overview">
         <svg class="navbar-logo" viewBox="0 0 32 32" aria-hidden="true">
           <rect width="32" height="32" rx="7" fill="currentColor"/>
@@ -26,6 +27,8 @@ export function renderNavbar(activeTab) {
         </svg>
         <span class="navbar-title">Runway</span>
       </a>
+      <span class="navbar-context-wrap" aria-hidden="true"><span class="navbar-sep">/</span><span class="navbar-context"></span></span>
+      </div>
 
       <nav class="navbar-nav" id="navbar-nav" aria-label="Sections">
         ${TABS.map((t) => `

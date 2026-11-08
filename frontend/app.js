@@ -6,6 +6,7 @@ import './style.css';
 import { renderNavbar, bindNavbarEvents } from './components/navbar.js';
 import { bindAlertActions } from './components/alerts.js';
 import { destroyAllCharts } from './components/charts.js';
+import { initScrollFx } from './lib/scroll.js';
 
 import { renderDashboard, initDashboardCharts } from './pages/dashboard.js';
 import { renderAISpend, initAISpendCharts } from './pages/ai-spend.js';
@@ -70,6 +71,7 @@ function renderApp({ keepPosition = false } = {}) {
   bindNavbarEvents(navigateTo, toggleTheme);
   bindAlertActions();
   page.init();
+  window.runwayCleanup.push(initScrollFx(document));
 }
 
 function init() {

@@ -7,6 +7,7 @@
 
 import { Chart, registerables } from 'chart.js';
 import { cssVar, escapeHtml, reducedMotion, rgba } from '../lib/ui.js';
+import { whenSeen } from '../lib/scroll.js';
 
 Chart.register(...registerables);
 
@@ -66,8 +67,12 @@ function mount(id, config) {
   requestAnimationFrame(() => {
     const canvas = document.getElementById(id);
     if (!canvas) return;
-    charts[id]?.destroy();
-    charts[id] = new Chart(canvas.getContext('2d'), config);
+    // A chart below the fold waits until it's scrolled into view, so its draw-in is seen.
+    whenSeen(canvas.closest('.chart-card') || canvas, () => {
+      if (!canvas.isConnected) return;
+      charts[id]?.destroy();
+      charts[id] = new Chart(canvas.getContext('2d'), config);
+    });
   });
 }
 
