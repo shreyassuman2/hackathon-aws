@@ -90,5 +90,5 @@ infra/template.yaml AWS SAM: API Lambda, worker Lambda, digest Lambda, DynamoDB
 
 ## Team
 
-Four owners, one area each. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Team of 4. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
